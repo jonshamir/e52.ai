@@ -1,0 +1,48 @@
+@import "reset.css";
+@import "typo.css";
+
+@font-face {
+  font-family: "TASAOrbiterVF";
+  src: url("/fonts/TASAOrbiterVF.woff2") format("woff2");
+}
+
+body {
+  --content-max-width: 50rem;
+  --transition-defaults: 200ms ease-out;
+
+  --rounding-small: 0.4rem;
+  --rounding-medium: 0.6rem;
+  --rounding-full: 999px;
+
+  --color-accent: #536bf2;
+  --color-link: #d4d4d4;
+
+  --color-text: #d4d4d4;
+  --color-text-rgb: 212, 212, 212;
+
+  --color-bg: #3d5680;
+  --color-bg-rgb: 50, 50, 50;
+
+  font-family: "TASAOrbiterVF", sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+main {
+  display: grid;
+
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-items: center;
+  min-height: 100svh;
+  align-content: center;
+  max-width: var(--content-max-width);
+  margin: auto;
+  padding: 3rem 0;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
