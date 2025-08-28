@@ -21,13 +21,13 @@ body {
   --rounding-medium: 0.6rem;
   --rounding-full: 999px;
 
-  --color-accent: #536bf2;
-  --color-link: #d4d4d4;
+  --color-accent: #3560c6;
+  --color-link: #5e5d5b;
 
-  --color-text: #d4d4d4;
+  --color-text: #5e5d5b;
   --color-text-rgb: 212, 212, 212;
 
-  --color-bg: #3d5680;
+  --color-bg: #eeede6;
   --color-bg-rgb: 50, 50, 50;
 
   font-family: "InterVariable", "Quattro", sans-serif;
@@ -52,4 +52,17 @@ main {
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.intro {
+  max-width: 25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+
+  h4 {
+    margin-top: 1rem;
+  }
 }

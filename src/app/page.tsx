@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Logo from "@/components/Logo";
 
 export default function Home() {
   useEffect(() => {
@@ -15,11 +16,19 @@ export default function Home() {
   return (
     <>
       <main>
-        <h1>E52.AI</h1>
-        <p>Interactive technology</p>
-        <p>
-          <a href="mailto:hello@e52.ai">Contact ↗</a>
-        </p>
+        <div className="intro">
+          <Logo />
+
+          <h4>Modern Tech, Business Outcomes</h4>
+          <p>
+            We are a data consultancy that partners with companies to build and
+            leverage data assets for bottom line impact.
+          </p>
+          <br />
+          <p>
+            <a href="mailto:hello@e52.ai">Contact ↗</a>
+          </p>
+        </div>
       </main>
     </>
   );
