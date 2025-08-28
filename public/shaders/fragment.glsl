@@ -21,13 +21,7 @@ float generateNoise(vec2 p, float time) {
     
     // Horizontal wave
     noise += sin(time * 1.8 + p.x * 35.0 + p.y * 8.0) * 0.05;
-    
-    // Vertical wave
-    noise += sin(time * 2.1 + p.x * 12.0 + p.y * 32.0) * 0.07;
-    
-    // High frequency detail
-    noise += sin(time * 3.2 + p.x * 45.0 + p.y * 55.0) * 0.03;
-    
+        
     // Add some randomness with time-based phase shifts
     noise += sin(time * 1.2 + p.x * 28.0 + p.y * 42.0 + sin(time * 0.5) * 10.0) * 0.04;
     
@@ -60,7 +54,7 @@ void main() {
         
         // Get noise at the dot center to control its radius
         float dotNoise = generateNoise(c, u_time * 2.0 + 10.0);
-        float dynamicRadius = dotR * (0.5 + dotNoise * 1.5); // Radius varies from 0.5x to 2x base size
+        float dynamicRadius = dotR * (0.5 + dotNoise * 2.0); // Radius varies from 0.5x to 2x base size
         
         float d = sdCircle(p - c, dynamicRadius);
         minD = min(minD, d);
@@ -69,8 +63,8 @@ void main() {
     float aaNoise = fwidth(minD);
 
     float mask = (1.0 - smoothstep(0.0, aaNoise, minD));
-    float distanceFromCenter = length(p * 5.0);
-    mask *= 1.0 - distanceFromCenter;
+    // float distanceFromCenter = length(p * 5.0);
+    // mask *= 1.0 - distanceFromCenter;
 
-    gl_FragColor = vec4(0.208, 0.376, 0.776, mask);
+    gl_FragColor = vec4(0.369, 0.365, 0.357, mask) * 0.2;
 }
