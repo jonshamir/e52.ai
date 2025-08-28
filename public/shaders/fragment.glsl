@@ -48,9 +48,6 @@ void main() {
     // mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
     vec2 p = uv;
 
-    vec3 bg   = vec3(0.04, 0.05, 0.08);
-    vec3 dotC = vec3(1.0);
-
     float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
     float spacing = SPACING_BASE * (800.0 / u_resolution.y);
     float minD = 1e9;
@@ -70,8 +67,10 @@ void main() {
     }
     
     float aaNoise = fwidth(minD);
-    float maskNoise = 1.0 - smoothstep(0.0, aaNoise, minD);
-    
-    vec3 col = mix(bg, dotC, maskNoise);
-    gl_FragColor = vec4(0.208, 0.376, 0.776, maskNoise );
+
+    float mask = (1.0 - smoothstep(0.0, aaNoise, minD));
+    float distanceFromCenter = length(p * 5.0);
+    mask *= 1.0 - distanceFromCenter;
+
+    gl_FragColor = vec4(0.208, 0.376, 0.776, mask);
 }
