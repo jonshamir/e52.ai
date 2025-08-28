@@ -63,8 +63,7 @@ void main() {
     float aaNoise = fwidth(minD);
 
     float mask = (1.0 - smoothstep(0.0, aaNoise, minD));
-    // float distanceFromCenter = length(p * 5.0);
-    // mask *= 1.0 - distanceFromCenter;
+    float distanceFromCenter = 1.0 - length(p * 3.0);
 
-    gl_FragColor = vec4(0.369, 0.365, 0.357, mask) * 0.2;
+    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(mask, 0.0, 1.0)) * distanceFromCenter * 0.5;
 }
