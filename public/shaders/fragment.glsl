@@ -16,11 +16,11 @@ float sdCircle(vec2 p, float r) {
 void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     vec2 uv = (fragCoord - 0.5 * u_resolution.xy) / u_resolution.y;
-    // uv.x -= 0.33;
+    uv.x -= 0.33;
 
-    float rot = 0.0 * u_time;
-    mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
-    vec2 p = R * uv;
+    // float rot = 0.0 * u_time;
+    // mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
+    vec2 p = uv;
 
     vec3 bg   = vec3(0.04, 0.05, 0.08);
     vec3 dotC = vec3(1.0);
@@ -40,7 +40,8 @@ void main() {
 
     float aa    = fwidth(minD);
     float mask  = 1.0 - smoothstep(0.0, aa, minD);
+    float noise = (sin(u_time * 2.0 + p.x * 10.0 + p.y * 40.0) + 1.5) * 0.1;
 
     vec3 col = mix(bg, dotC, mask);
-    gl_FragColor = vec4(0.0, 0.0, 0.0, mask * 0.1);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, mask * noise);
 }
