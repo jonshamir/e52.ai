@@ -1,4 +1,6 @@
 :root {
+  --font-titles: "Inter", sans-serif;
+
   font-size: 1.2rem;
 
   @media screen and (max-width: 40rem) {

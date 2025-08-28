@@ -2,8 +2,14 @@
 @import "typo.css";
 
 @font-face {
-  font-family: "TASAOrbiterVF";
-  src: url("/fonts/TASAOrbiterVF.woff2") format("woff2");
+  font-family: "Quattro";
+  src: url("/fonts/iAWriterQuattroV.ttf");
+}
+
+@font-face {
+  font-family: "Quattro";
+  font-style: italic;
+  src: url("/fonts/iAWriterQuattroV-Italic.ttf");
 }
 
 body {
@@ -23,7 +29,7 @@ body {
   --color-bg: #3d5680;
   --color-bg-rgb: 50, 50, 50;
 
-  font-family: "TASAOrbiterVF", sans-serif;
+  font-family: "Quattro", sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
