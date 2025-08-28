@@ -62,7 +62,7 @@ void main() {
         vec2  c  = r * vec2(cos(a), sin(a));
         
         // Get noise at the dot center to control its radius
-        float dotNoise = generateNoise(c, u_time * 2.0);
+        float dotNoise = generateNoise(c, u_time * 2.0 + 10.0);
         float dynamicRadius = dotR * (0.5 + dotNoise * 1.5); // Radius varies from 0.5x to 2x base size
         
         float d = sdCircle(p - c, dynamicRadius);
@@ -73,5 +73,5 @@ void main() {
     float maskNoise = 1.0 - smoothstep(0.0, aaNoise, minD);
     
     vec3 col = mix(bg, dotC, maskNoise);
-    gl_FragColor = vec4(0.369, 0.365, 0.357, maskNoise * 0.7);
+    gl_FragColor = vec4(0.208, 0.376, 0.776, maskNoise );
 }
