@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "../styles/main.css";
 
 export const metadata: Metadata = {
-  title: "Studio Normal",
-  description: "Interactive Technology Studio",
+  title: "e52 Technologies",
+  description:
+    "We are a data consultancy that partners with companies to build and leverage data assets for bottom line impact.",
 };
 
 export default function RootLayout({
