@@ -6,8 +6,8 @@ uniform float u_time;
 
 const int   COUNT     = 200;
 const float GOLDEN    = 3.14159265359*(3.0 - sqrt(5.0));
-const float SPACING   = 0.035;
-const float DOT_R     = 0.008;
+const float SPACING_BASE = 0.035;
+const float DOT_R_BASE = 0.008;
 
 float sdCircle(vec2 p, float r) {
     return length(p) - r;
@@ -16,6 +16,7 @@ float sdCircle(vec2 p, float r) {
 void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     vec2 uv = (fragCoord - 0.5 * u_resolution.xy) / u_resolution.y;
+    // uv.x -= 0.33;
 
     float rot = 0.0 * u_time;
     mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
@@ -24,14 +25,16 @@ void main() {
     vec3 bg   = vec3(0.04, 0.05, 0.08);
     vec3 dotC = vec3(1.0);
 
+    float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
+    float spacing = SPACING_BASE * (800.0 / u_resolution.y);
     float minD = 1e9;
 
     for (int i = 0; i < COUNT; ++i) {
         float fi = float(i);
         float a  = GOLDEN * fi;
-        float r  = SPACING * sqrt(fi);
+        float r  = spacing * sqrt(fi);
         vec2  c  = r * vec2(cos(a), sin(a));
-        float d  = sdCircle(p - c, DOT_R);
+        float d  = sdCircle(p - c, dotR);
         minD = min(minD, d);
     }
 
