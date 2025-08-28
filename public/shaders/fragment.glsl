@@ -4,7 +4,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-const int   COUNT     = 1500;
+const int   COUNT     = 200;
 const float GOLDEN    = 3.14159265359*(3.0 - sqrt(5.0));
 const float SPACING   = 0.035;
 const float DOT_R     = 0.008;
@@ -39,5 +39,5 @@ void main() {
     float mask  = 1.0 - smoothstep(0.0, aa, minD);
 
     vec3 col = mix(bg, dotC, mask);
-    gl_FragColor = vec4(0.4, 0.4, 0.4, mask);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, mask * 0.1);
 }
