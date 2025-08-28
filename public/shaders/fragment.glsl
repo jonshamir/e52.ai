@@ -1,6 +1,43 @@
+#extension GL_OES_standard_derivatives : enable
 precision mediump float;
-varying vec2 v_uv;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+const int   COUNT     = 1500;
+const float GOLDEN    = 3.14159265359*(3.0 - sqrt(5.0));
+const float SPACING   = 0.035;
+const float DOT_R     = 0.008;
+
+float sdCircle(vec2 p, float r) {
+    return length(p) - r;
+}
 
 void main() {
-  gl_FragColor = vec4(v_uv.x, v_uv.y, 0.0, 1.0);
+    vec2 fragCoord = gl_FragCoord.xy;
+    vec2 uv = (fragCoord - 0.5 * u_resolution.xy) / u_resolution.y;
+
+    float rot = 0.0 * u_time;
+    mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
+    vec2 p = R * uv;
+
+    vec3 bg   = vec3(0.04, 0.05, 0.08);
+    vec3 dotC = vec3(1.0);
+
+    float minD = 1e9;
+
+    for (int i = 0; i < COUNT; ++i) {
+        float fi = float(i);
+        float a  = GOLDEN * fi;
+        float r  = SPACING * sqrt(fi);
+        vec2  c  = r * vec2(cos(a), sin(a));
+        float d  = sdCircle(p - c, DOT_R);
+        minD = min(minD, d);
+    }
+
+    float aa    = fwidth(minD);
+    float mask  = 1.0 - smoothstep(0.0, aa, minD);
+
+    vec3 col = mix(bg, dotC, mask);
+    gl_FragColor = vec4(0.4, 0.4, 0.4, mask);
 }
