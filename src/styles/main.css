@@ -1,5 +1,6 @@
 @import "reset.css";
 @import "typo.css";
+@import "@fontsource-variable/inter";
 
 @font-face {
   font-family: "Quattro";
@@ -29,7 +30,7 @@ body {
   --color-bg: #3d5680;
   --color-bg-rgb: 50, 50, 50;
 
-  font-family: "Quattro", sans-serif;
+  font-family: "InterVariable", "Quattro", sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
