@@ -60,6 +60,7 @@ main {
 }
 
 .intro {
+  margin-top: -3rem;
   max-width: 25rem;
   display: flex;
   flex-direction: column;
