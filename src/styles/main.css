@@ -25,10 +25,10 @@ body {
   --color-link: #5e5d5b;
 
   --color-text: #5e5d5b;
-  --color-text-rgb: 212, 212, 212;
+  --color-text-rgb: 94, 93, 91;
 
   --color-bg: #eeede6;
-  --color-bg-rgb: 50, 50, 50;
+  --color-bg-rgb: 238, 237, 230;
 
   font-family: "InterVariable", "Quattro", sans-serif;
   background-color: var(--color-bg);
@@ -91,7 +91,12 @@ main {
   transform: translateX(15%);
 
   @media (max-width: 60rem) {
-    opacity: 0.4;
     transform: translateX(15%) translateY(10%);
+  }
+}
+
+main {
+  @media (max-width: 60rem) {
+    background-color: rgba(var(--color-bg-rgb), 0.5);
   }
 }

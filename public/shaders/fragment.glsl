@@ -15,5 +15,5 @@ void main() {
     // float opacityFalloff = exp(-v_distanceFromCenter * 1.0); // Exponential falloff
     float finalAlpha = mask;
     
-    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(finalAlpha, 0.0, 1.0) * 0.5);
+    gl_FragColor = vec4(0.745, 0.745, 0.722, clamp(finalAlpha, 0.0, 1.0));
 }
