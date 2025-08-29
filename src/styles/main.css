@@ -62,6 +62,7 @@ main {
 .intro {
   padding: 1.5rem;
   margin-top: -8rem;
+  transform: translateX(-5rem);
   max-width: 26rem;
   display: flex;
   flex-direction: column;
@@ -71,6 +72,10 @@ main {
 
   h4 {
     margin-top: 2rem;
+  }
+
+  @media (max-width: 60rem) {
+    transform: none;
   }
 }
 
