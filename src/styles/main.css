@@ -91,7 +91,7 @@ main {
   transform: translateX(15%);
 
   @media (max-width: 60rem) {
-    opacity: 0.5;
-    transform: translateX(15%) translateY(5%);
+    opacity: 0.4;
+    transform: translateX(15%) translateY(10%);
   }
 }
