@@ -8,7 +8,7 @@ varying vec2 v_localPos;      // Position within dot quad
 varying float v_distanceFromCenter; // Distance from spiral center for opacity falloff
 
 const float DOT_R_BASE = 0.02;
-const float SPACING_BASE = 0.05;
+const float SPACING_BASE = 0.03;
 const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
 float generateNoise(vec2 p, float time) {
@@ -33,7 +33,8 @@ void main() {
   float baseR = spacing * sqrt(fi);
   
   // Apply spreading factor: dots spread out more as they get further from center
-  float spreadFactor = 0.5 + baseR * baseR;  // Increase spread with distance
+  // float spreadFactor = 0.5 + baseR * baseR;  // Increase spread with distance
+  float spreadFactor = 1.0;
   float r = baseR * spreadFactor;
   
   vec2 dotCenter = r * vec2(cos(a), sin(a));
