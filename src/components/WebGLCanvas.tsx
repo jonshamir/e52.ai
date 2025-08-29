@@ -178,7 +178,7 @@ export default function WebGLCanvas() {
 
         gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
         gl.uniform1f(timeUniformLocation, time * 0.001);
-        gl.uniform2f(spiralCenterUniformLocation, -0.5, 0.0); // Default: original offset
+        gl.uniform2f(spiralCenterUniformLocation, 0.0, 0.0); // Default: original offset
 
         // Set up position attribute (per vertex)
         gl.enableVertexAttribArray(positionAttributeLocation);
@@ -243,17 +243,5 @@ export default function WebGLCanvas() {
     initWebGL();
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: -1,
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} className="effect-canvas" />;
 }

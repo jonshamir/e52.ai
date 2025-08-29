@@ -61,7 +61,7 @@ main {
 
 .intro {
   padding: 1.5rem;
-  margin-top: -5rem;
+  margin-top: -8rem;
   max-width: 26rem;
   display: flex;
   flex-direction: column;
@@ -71,5 +71,20 @@ main {
 
   h4 {
     margin-top: 2rem;
+  }
+}
+
+.effect-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  transform: translateX(15%);
+
+  @media (max-width: 60rem) {
+    opacity: 0.5;
+    transform: translateX(15%) translateY(5%);
   }
 }
