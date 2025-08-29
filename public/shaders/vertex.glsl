@@ -14,10 +14,10 @@ const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
 float generateNoise(vec2 p, float time) {
     float noise = 0.0;
-    noise += sin(time * 1.5 + p.x * 15.0 + p.y * 25.0) * 0.08;
-    noise += sin(time * 2.3 + p.x * 22.0 + p.y * 18.0) * 0.06;
-    noise += sin(time * 1.8 + p.x * 1.0 + p.y * 1.0) * 0.05;
-    noise += sin(time * 1.2 + p.x * 28.0 + p.y * 42.0 + sin(time * 0.5) * 10.0) * 0.04;
+    noise += sin(time * 1.5 + p.x * 6.0 + p.y * 10.0) * 0.08;
+    noise += sin(time * 2.3 + p.x * 8.8 + p.y * 7.2) * 0.06;
+    noise += sin(time * 1.8 + p.x * 0.4 + p.y * 0.4) * 0.05;
+    noise += sin(time * 1.2 + p.x * 11.2 + p.y * 16.8 + sin(time * 0.5) * 4.0) * 0.04;
     return (noise + 0.2) * 0.7;
 }
 
