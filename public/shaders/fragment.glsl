@@ -3,11 +3,12 @@ precision mediump float;
 
 uniform vec2 u_resolution;
 uniform float u_time;
+varying vec2 v_uv;
+varying float v_dotR;
+varying float v_spacing;
 
 const int   COUNT     = 200;
 const float GOLDEN    = 3.14159265359*(3.0 - sqrt(5.0));
-const float SPACING_BASE = 0.045;
-const float DOT_R_BASE = 0.01;
 
 float generateNoise(vec2 p, float time) {
     // Multi-directional noise with different wavelengths and phases
@@ -42,8 +43,8 @@ void main() {
     // mat2 R = mat2(cos(rot), -sin(rot), sin(rot), cos(rot));
     vec2 p = uv;
 
-    float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
-    float spacing = SPACING_BASE * (800.0 / u_resolution.y);
+    float dotR = v_dotR;
+    float spacing = v_spacing;
     float minD = 1e9;
 
     for (int i = 0; i < COUNT; ++i) {
