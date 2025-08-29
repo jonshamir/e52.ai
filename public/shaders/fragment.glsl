@@ -8,7 +8,7 @@ void main() {
     float d = length(v_localPos) - 1.0;
     float aaNoise = fwidth(d);
     
-    float mask = 1.0 - smoothstep(0.0, aaNoise, d);
+    float mask = 1.0 - smoothstep(-aaNoise, 0.0, d);
     
-    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(mask, 0.0, 1.0)) * 0.3;
+    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(mask, 0.0, 1.0));
 }
