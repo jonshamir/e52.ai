@@ -10,5 +10,5 @@ void main() {
     
     float mask = 1.0 - smoothstep(0.0, aaNoise, d);
     
-    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(mask, 0.0, 1.0)) * 0.5;
+    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(mask, 0.0, 1.0)) * 0.3;
 }

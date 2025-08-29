@@ -48,6 +48,8 @@ function createProgram(
   return program;
 }
 
+const DOT_COUNT = 1200;
+
 export default function WebGLCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -55,7 +57,10 @@ export default function WebGLCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false });
+    const gl = canvas.getContext("webgl", {
+      alpha: true,
+      premultipliedAlpha: false,
+    });
     if (!gl) {
       console.error("WebGL not supported");
       return;
@@ -110,6 +115,10 @@ export default function WebGLCanvas() {
         "u_resolution"
       );
       const timeUniformLocation = gl.getUniformLocation(program, "u_time");
+      const spiralCenterUniformLocation = gl.getUniformLocation(
+        program,
+        "u_spiralCenter"
+      );
 
       // Create quad vertices (2 triangles)
       const positionBuffer = gl.createBuffer();
@@ -137,7 +146,7 @@ export default function WebGLCanvas() {
       // Create instance data (dot indices 0-199)
       const instanceBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-      const dotIndices = Array.from({ length: 200 }, (_, i) => i);
+      const dotIndices = Array.from({ length: DOT_COUNT }, (_, i) => i);
       gl.bufferData(
         gl.ARRAY_BUFFER,
         new Float32Array(dotIndices),
@@ -156,11 +165,11 @@ export default function WebGLCanvas() {
 
       function render(time: number = 0) {
         if (!gl || !canvas) return;
-        
+
         // Enable blending for transparency
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        
+
         // Clear with transparent background
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -169,6 +178,7 @@ export default function WebGLCanvas() {
 
         gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
         gl.uniform1f(timeUniformLocation, time * 0.001);
+        gl.uniform2f(spiralCenterUniformLocation, -0.33, 0.0); // Default: original offset
 
         // Set up position attribute (per vertex)
         gl.enableVertexAttribArray(positionAttributeLocation);
@@ -198,8 +208,13 @@ export default function WebGLCanvas() {
           1
         );
 
-        // Draw 200 instances of 6 vertices each (2 triangles per dot)
-        instancedArraysExt!.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 200);
+        // Draw instances of 6 vertices each (2 triangles per dot)
+        instancedArraysExt!.drawArraysInstancedANGLE(
+          gl.TRIANGLES,
+          0,
+          6,
+          DOT_COUNT
+        );
       }
 
       resize();

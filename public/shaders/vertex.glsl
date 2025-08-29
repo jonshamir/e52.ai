@@ -3,9 +3,10 @@ attribute vec2 a_position;    // Quad vertices (-1,-1) to (1,1)
 attribute float a_dotIndex;   // Instance data: which dot (0-199)
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform vec2 u_spiralCenter;  // Center offset for the spiral
 varying vec2 v_localPos;      // Position within dot quad
 
-const float DOT_R_BASE = 0.01;
+const float DOT_R_BASE = 0.02;
 const float SPACING_BASE = 0.045;
 const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
@@ -36,9 +37,9 @@ void main() {
   // Transform to normalized coordinates matching original fragment shader
   vec2 normalizedPos = dotCenter;
   
-  // Transform to clip space with aspect ratio correction (matching original)
+  // Transform to clip space with configurable spiral center
   vec2 uv = normalizedPos;
-  uv.x -= 0.33;  // Original horizontal offset
+  uv -= u_spiralCenter;  // Apply spiral center offset
   
   // Apply aspect ratio correction like the original fragment shader
   vec2 aspectCorrectedUv = uv;
