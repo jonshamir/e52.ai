@@ -5,7 +5,7 @@
 }
 
 ::selection {
-  background: rgba(var(--color-text-rgb), 0.25);
+  background: rgba(var(--color-text-rgb), 0.5);
 }
 
 p {
