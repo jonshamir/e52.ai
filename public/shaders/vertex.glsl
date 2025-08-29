@@ -22,9 +22,11 @@ float generateNoise(vec2 p, float time) {
 }
 
 void main() {
-  // Calculate resolution-dependent scaling
-  float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
-  float spacing = SPACING_BASE * (800.0 / u_resolution.y);
+  // Calculate resolution-dependent scaling accounting for device pixel ratio
+  // On iOS, u_resolution includes devicePixelRatio, so we need to normalize
+  float screenHeight = u_resolution.y;
+  float dotR = DOT_R_BASE * min(1.0, 800.0 / screenHeight) * max(1.0, screenHeight / 1600.0);
+  float spacing = SPACING_BASE * min(1.0, 800.0 / screenHeight) * max(1.0, screenHeight / 1600.0);
   
   // Calculate dot center from golden ratio spiral
   float fi = a_dotIndex;
