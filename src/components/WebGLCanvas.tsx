@@ -48,7 +48,7 @@ function createProgram(
   return program;
 }
 
-const DOT_COUNT = 1200;
+const DOT_COUNT = 200;
 
 export default function WebGLCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

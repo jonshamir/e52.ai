@@ -59,5 +59,5 @@ void main() {
   v_localPos = a_position;
   
   // Calculate distance from center for opacity falloff
-  v_distanceFromCenter = length(uv);
+  v_distanceFromCenter = length(normalizedPos);
 }

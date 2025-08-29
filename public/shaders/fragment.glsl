@@ -12,8 +12,8 @@ void main() {
     float mask = 1.0 - smoothstep(-aaNoise, 0.0, d);
     
     // Apply opacity falloff based on distance from center
-    float opacityFalloff = exp(-v_distanceFromCenter * 0.8); // Exponential falloff
-    float finalAlpha = mask * opacityFalloff;
+    // float opacityFalloff = exp(-v_distanceFromCenter * 1.0); // Exponential falloff
+    float finalAlpha = mask;
     
-    gl_FragColor = vec4(0.369, 0.365, 0.357, clamp(finalAlpha, 0.0, 1.0)) * 0.5;
+    gl_FragColor = vec4(0.208, 0.376, 0.776, clamp(finalAlpha, 0.0, 1.0)) * 0.4;
 }
