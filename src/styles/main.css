@@ -71,6 +71,9 @@ main {
   justify-content: flex-start;
   gap: 0.5rem;
   pointer-events: auto;
+  -webkit-text-stroke-width: 4px;
+  -webkit-text-stroke-color: var(--color-bg);
+  paint-order: stroke fill;
 
   h4 {
     margin-top: 2rem;
@@ -97,6 +100,6 @@ main {
 
 main {
   @media (max-width: 60rem) {
-    background-color: rgba(var(--color-bg-rgb), 0.5);
+    background-color: rgba(var(--color-bg-rgb), 0.6);
   }
 }
