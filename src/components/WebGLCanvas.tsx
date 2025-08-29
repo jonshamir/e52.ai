@@ -55,7 +55,7 @@ export default function WebGLCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext("webgl");
+    const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false });
     if (!gl) {
       console.error("WebGL not supported");
       return;
@@ -156,7 +156,13 @@ export default function WebGLCanvas() {
 
       function render(time: number = 0) {
         if (!gl || !canvas) return;
-        gl.clearColor(0, 0, 0, 1);
+        
+        // Enable blending for transparency
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        
+        // Clear with transparent background
+        gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         gl.useProgram(program);
