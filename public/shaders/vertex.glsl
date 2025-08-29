@@ -4,6 +4,7 @@ attribute float a_dotIndex;   // Instance data: which dot (0-199)
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_spiralCenter;  // Center offset for the spiral
+uniform vec2 u_cursorPosition; // Cursor position in normalized coordinates
 varying vec2 v_localPos;      // Position within dot quad
 varying float v_distanceFromCenter; // Distance from spiral center for opacity falloff
 
@@ -37,12 +38,22 @@ void main() {
   
   vec2 dotCenter = r * vec2(cos(a), sin(a));
   
-  // Calculate dynamic radius with noise
-  float dotNoise = generateNoise(dotCenter, u_time * 2.0 + 10.0);
-  float dynamicRadius = dotR * (0.5 + dotNoise * 3.0);
-  
   // Transform to normalized coordinates matching original fragment shader
   vec2 normalizedPos = dotCenter;
+  
+  // Calculate dynamic radius with noise
+  float dotNoise = generateNoise(dotCenter, u_time * 2.0 + 10.0);
+  
+  // Calculate distance from cursor to dot center
+  vec2 cursorToDot = normalizedPos - u_cursorPosition;
+  float distanceToCursor = length(cursorToDot);
+  distanceToCursor = distanceToCursor*distanceToCursor * 10.0;
+  
+  // Scale factor based on distance to cursor (closer = larger)
+  float cursorInfluence = 1.0 / (1.0 + distanceToCursor * 2.0); // Falloff with distance
+  float cursorScale = 1.0 + cursorInfluence * 0.8; // Scale up to 3x when close
+  
+  float dynamicRadius = dotR * (0.5 + dotNoise * 3.0) * cursorScale;
   
   // Transform to clip space with configurable spiral center
   vec2 uv = normalizedPos;

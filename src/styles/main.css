@@ -46,6 +46,7 @@ main {
   max-width: var(--content-max-width);
   margin: auto;
   padding: 3rem 0;
+  pointer-events: none;
 }
 
 @media (min-width: 60rem) {
@@ -69,6 +70,7 @@ main {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 0.5rem;
+  pointer-events: auto;
 
   h4 {
     margin-top: 2rem;

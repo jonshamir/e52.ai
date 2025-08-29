@@ -52,6 +52,7 @@ const DOT_COUNT = 300;
 
 export default function WebGLCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mousePosRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -119,6 +120,10 @@ export default function WebGLCanvas() {
         program,
         "u_spiralCenter"
       );
+      const cursorPositionUniformLocation = gl.getUniformLocation(
+        program,
+        "u_cursorPosition"
+      );
 
       // Create quad vertices (2 triangles)
       const positionBuffer = gl.createBuffer();
@@ -179,6 +184,11 @@ export default function WebGLCanvas() {
         gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
         gl.uniform1f(timeUniformLocation, time * 0.001);
         gl.uniform2f(spiralCenterUniformLocation, 0.0, 0.0); // Default: original offset
+        
+        // Convert mouse position to normalized coordinates (-1 to 1)
+        const normalizedX = (mousePosRef.current.x / canvas.width) * 2 - 1;
+        const normalizedY = -((mousePosRef.current.y / canvas.height) * 2 - 1); // Flip Y
+        gl.uniform2f(cursorPositionUniformLocation, normalizedX, normalizedY);
 
         // Set up position attribute (per vertex)
         gl.enableVertexAttribArray(positionAttributeLocation);
@@ -232,10 +242,19 @@ export default function WebGLCanvas() {
         resize();
       };
 
+      const handleMouseMove = (event: MouseEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        mousePosRef.current.x = (event.clientX - rect.left) * dpr;
+        mousePosRef.current.y = (event.clientY - rect.top) * dpr;
+      };
+
       window.addEventListener("resize", handleResize);
+      document.addEventListener("mousemove", handleMouseMove);
 
       return () => {
         window.removeEventListener("resize", handleResize);
+        document.removeEventListener("mousemove", handleMouseMove);
         cancelAnimationFrame(animationId);
       };
     }
