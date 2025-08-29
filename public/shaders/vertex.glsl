@@ -8,7 +8,7 @@ varying vec2 v_localPos;      // Position within dot quad
 varying float v_distanceFromCenter; // Distance from spiral center for opacity falloff
 
 const float DOT_R_BASE = 0.02;
-const float SPACING_BASE = 0.08;
+const float SPACING_BASE = 0.05;
 const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
 float generateNoise(vec2 p, float time) {
@@ -21,9 +21,11 @@ float generateNoise(vec2 p, float time) {
 }
 
 void main() {
-  // Calculate resolution-dependent scaling
+  // Calculate resolution-dependent scaling for dot size only
   float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
-  float spacing = SPACING_BASE * (800.0 / u_resolution.y);
+  
+  // Keep spacing consistent regardless of resolution
+  float spacing = SPACING_BASE;
   
   // Calculate dot center from golden ratio spiral
   float fi = a_dotIndex;
