@@ -22,13 +22,13 @@ body {
   --rounding-full: 999px;
 
   --color-accent: #3560c6;
-  --color-link: #5e5d5b;
+  --color-link: var(--color-text);
 
-  --color-text: #5e5d5b;
-  --color-text-rgb: 94, 93, 91;
+  --color-text: #e1ded7;
+  --color-text-rgb: 225, 222, 215;
 
-  --color-bg: #eeede6;
-  --color-bg-rgb: 238, 237, 230;
+  --color-bg: #313335;
+  --color-bg-rgb: 49, 51, 53;
 
   font-family: "InterVariable", "Quattro", sans-serif;
   background-color: var(--color-bg);
