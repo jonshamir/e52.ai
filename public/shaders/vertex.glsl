@@ -8,24 +8,22 @@ varying vec2 v_localPos;      // Position within dot quad
 varying float v_distanceFromCenter; // Distance from spiral center for opacity falloff
 
 const float DOT_R_BASE = 0.02;
-const float SPACING_BASE = 0.03;
+const float SPACING_BASE = 0.07;
 const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
 float generateNoise(vec2 p, float time) {
     float noise = 0.0;
     noise += sin(time * 1.5 + p.x * 15.0 + p.y * 25.0) * 0.08;
     noise += sin(time * 2.3 + p.x * 22.0 + p.y * 18.0) * 0.06;
-    noise += sin(time * 1.8 + p.x * 35.0 + p.y * 8.0) * 0.05;
+    noise += sin(time * 1.8 + p.x * 1.0 + p.y * 1.0) * 0.05;
     noise += sin(time * 1.2 + p.x * 28.0 + p.y * 42.0 + sin(time * 0.5) * 10.0) * 0.04;
     return (noise + 0.2) * 0.7;
 }
 
 void main() {
-  // Calculate resolution-dependent scaling for dot size only
+  // Calculate resolution-dependent scaling
   float dotR = DOT_R_BASE * (800.0 / u_resolution.y);
-  
-  // Keep spacing consistent regardless of resolution
-  float spacing = SPACING_BASE;
+  float spacing = SPACING_BASE * (800.0 / u_resolution.y);
   
   // Calculate dot center from golden ratio spiral
   float fi = a_dotIndex;
@@ -35,7 +33,7 @@ void main() {
   // Apply spreading factor: dots spread out more as they get further from center
   // float spreadFactor = 0.5 + baseR * baseR;  // Increase spread with distance
   float spreadFactor = 1.0;
-  float r = baseR * spreadFactor;
+  float r = baseR * spreadFactor + 0.003;
   
   vec2 dotCenter = r * vec2(cos(a), sin(a));
   

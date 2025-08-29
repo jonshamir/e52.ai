@@ -48,7 +48,7 @@ function createProgram(
   return program;
 }
 
-const DOT_COUNT = 200;
+const DOT_COUNT = 300;
 
 export default function WebGLCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -178,7 +178,7 @@ export default function WebGLCanvas() {
 
         gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
         gl.uniform1f(timeUniformLocation, time * 0.001);
-        gl.uniform2f(spiralCenterUniformLocation, -0.33, 0.0); // Default: original offset
+        gl.uniform2f(spiralCenterUniformLocation, -0.5, 0.0); // Default: original offset
 
         // Set up position attribute (per vertex)
         gl.enableVertexAttribArray(positionAttributeLocation);
