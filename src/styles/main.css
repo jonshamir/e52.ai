@@ -46,6 +46,7 @@ main {
   max-width: var(--content-max-width);
   margin: auto;
   padding: 3rem 0;
+  pointer-events: none;
 }
 
 @media (min-width: 60rem) {
@@ -61,15 +62,36 @@ main {
 
 .intro {
   padding: 1.5rem;
-  margin-top: -5rem;
+  margin-top: -8rem;
+  transform: translateX(-5rem);
   max-width: 26rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 0.5rem;
+  pointer-events: auto;
 
   h4 {
     margin-top: 2rem;
+  }
+
+  @media (max-width: 60rem) {
+    transform: none;
+  }
+}
+
+.effect-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  transform: translateX(15%);
+
+  @media (max-width: 60rem) {
+    opacity: 0.4;
+    transform: translateX(15%) translateY(10%);
   }
 }

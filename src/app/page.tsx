@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Logo from "@/components/Logo";
+import WebGLCanvas from "@/components/WebGLCanvas";
 
 export default function Home() {
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function Home() {
 
   return (
     <>
+      <WebGLCanvas />
       <main>
         <div className="intro">
           <Logo />
