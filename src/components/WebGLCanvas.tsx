@@ -62,15 +62,15 @@ export default function WebGLCanvas() {
     }
 
     // Enable the standard derivatives extension for fwidth()
-    const ext = gl.getExtension('OES_standard_derivatives');
+    const ext = gl.getExtension("OES_standard_derivatives");
     if (!ext) {
-      console.warn('OES_standard_derivatives extension not supported');
+      console.warn("OES_standard_derivatives extension not supported");
     }
 
     // Enable instanced arrays extension
-    const instancedArraysExt = gl.getExtension('ANGLE_instanced_arrays');
+    const instancedArraysExt = gl.getExtension("ANGLE_instanced_arrays");
     if (!instancedArraysExt) {
-      console.error('ANGLE_instanced_arrays extension not supported');
+      console.error("ANGLE_instanced_arrays extension not supported");
       return;
     }
 
@@ -96,38 +96,61 @@ export default function WebGLCanvas() {
       const program = createProgram(gl, vertexShader, fragmentShader);
       if (!program) return;
 
-      const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-      const dotIndexAttributeLocation = gl.getAttribLocation(program, "a_dotIndex");
+      const positionAttributeLocation = gl.getAttribLocation(
+        program,
+        "a_position"
+      );
+      const dotIndexAttributeLocation = gl.getAttribLocation(
+        program,
+        "a_dotIndex"
+      );
 
-      const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+      const resolutionUniformLocation = gl.getUniformLocation(
+        program,
+        "u_resolution"
+      );
       const timeUniformLocation = gl.getUniformLocation(program, "u_time");
 
       // Create quad vertices (2 triangles)
       const positionBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       const positions = [
-        -1.0, -1.0,  // Triangle 1
-         1.0, -1.0,
-        -1.0,  1.0,
-        -1.0,  1.0,  // Triangle 2
-         1.0, -1.0,
-         1.0,  1.0
+        -1.0,
+        -1.0, // Triangle 1
+        1.0,
+        -1.0,
+        -1.0,
+        1.0,
+        -1.0,
+        1.0, // Triangle 2
+        1.0,
+        -1.0,
+        1.0,
+        1.0,
       ];
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(positions),
+        gl.STATIC_DRAW
+      );
 
       // Create instance data (dot indices 0-199)
       const instanceBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-      const dotIndices = Array.from({length: 200}, (_, i) => i);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotIndices), gl.STATIC_DRAW);
+      const dotIndices = Array.from({ length: 200 }, (_, i) => i);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotIndices),
+        gl.STATIC_DRAW
+      );
 
       function resize() {
         if (!canvas || !gl) return;
         const dpr = window.devicePixelRatio || 1;
         canvas.width = window.innerWidth * dpr;
         canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
         gl.viewport(0, 0, canvas.width, canvas.height);
       }
 
@@ -144,27 +167,44 @@ export default function WebGLCanvas() {
         // Set up position attribute (per vertex)
         gl.enableVertexAttribArray(positionAttributeLocation);
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(
+          positionAttributeLocation,
+          2,
+          gl.FLOAT,
+          false,
+          0,
+          0
+        );
 
         // Set up dot index attribute (per instance)
         gl.enableVertexAttribArray(dotIndexAttributeLocation);
         gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-        gl.vertexAttribPointer(dotIndexAttributeLocation, 1, gl.FLOAT, false, 0, 0);
-        instancedArraysExt!.vertexAttribDivisorANGLE(dotIndexAttributeLocation, 1);
+        gl.vertexAttribPointer(
+          dotIndexAttributeLocation,
+          1,
+          gl.FLOAT,
+          false,
+          0,
+          0
+        );
+        instancedArraysExt!.vertexAttribDivisorANGLE(
+          dotIndexAttributeLocation,
+          1
+        );
 
         // Draw 200 instances of 6 vertices each (2 triangles per dot)
         instancedArraysExt!.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 200);
       }
 
       resize();
-      
+
       let animationId: number;
-      
+
       function animate(time: number) {
         render(time);
         animationId = requestAnimationFrame(animate);
       }
-      
+
       animationId = requestAnimationFrame(animate);
 
       const handleResize = () => {

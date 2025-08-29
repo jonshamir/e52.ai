@@ -36,13 +36,17 @@ void main() {
   // Transform to normalized coordinates matching original fragment shader
   vec2 normalizedPos = dotCenter;
   
-  // Transform to screen coordinates like the original
-  vec2 screenPos = (normalizedPos * u_resolution.y + 0.5 * u_resolution.xy);
-  vec2 uv = (screenPos - 0.5 * u_resolution.xy) / u_resolution.y;
+  // Transform to clip space with aspect ratio correction (matching original)
+  vec2 uv = normalizedPos;
   uv.x -= 0.33;  // Original horizontal offset
   
-  // Transform quad vertex to world position  
-  vec2 worldPos = uv + a_position * dynamicRadius;
+  // Apply aspect ratio correction like the original fragment shader
+  vec2 aspectCorrectedUv = uv;
+  aspectCorrectedUv.x *= u_resolution.y / u_resolution.x;  // Correct aspect ratio
+  
+  // Transform quad vertex to world position with aspect-corrected radius
+  vec2 aspectCorrectedRadius = vec2(dynamicRadius * u_resolution.y / u_resolution.x, dynamicRadius);
+  vec2 worldPos = aspectCorrectedUv + a_position * aspectCorrectedRadius;
   
   gl_Position = vec4(worldPos, 0.0, 1.0);
   v_localPos = a_position;
