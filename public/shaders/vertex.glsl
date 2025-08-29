@@ -5,9 +5,10 @@ uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_spiralCenter;  // Center offset for the spiral
 varying vec2 v_localPos;      // Position within dot quad
+varying float v_distanceFromCenter; // Distance from spiral center for opacity falloff
 
 const float DOT_R_BASE = 0.02;
-const float SPACING_BASE = 0.045;
+const float SPACING_BASE = 0.08;
 const float GOLDEN = 3.14159265359*(3.0 - sqrt(5.0));
 
 float generateNoise(vec2 p, float time) {
@@ -27,12 +28,17 @@ void main() {
   // Calculate dot center from golden ratio spiral
   float fi = a_dotIndex;
   float a = GOLDEN * fi;
-  float r = spacing * sqrt(fi);
+  float baseR = spacing * sqrt(fi);
+  
+  // Apply spreading factor: dots spread out more as they get further from center
+  float spreadFactor = 0.5 + baseR * baseR;  // Increase spread with distance
+  float r = baseR * spreadFactor;
+  
   vec2 dotCenter = r * vec2(cos(a), sin(a));
   
   // Calculate dynamic radius with noise
   float dotNoise = generateNoise(dotCenter, u_time * 2.0 + 10.0);
-  float dynamicRadius = dotR * (0.5 + dotNoise * 2.0);
+  float dynamicRadius = dotR * (0.5 + dotNoise * 3.0);
   
   // Transform to normalized coordinates matching original fragment shader
   vec2 normalizedPos = dotCenter;
@@ -51,4 +57,7 @@ void main() {
   
   gl_Position = vec4(worldPos, 0.0, 1.0);
   v_localPos = a_position;
+  
+  // Calculate distance from center for opacity falloff
+  v_distanceFromCenter = length(uv);
 }
