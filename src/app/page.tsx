@@ -20,7 +20,7 @@ export default function Home() {
       <main>
         <div className="intro">
           <Logo />
-
+          <h1>We are e52</h1>
           <h4>Embedded Frontier Technology</h4>
           <p>
             We design bespoke systems powered by cutting-edge AI and data. Our
