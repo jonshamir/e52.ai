@@ -27,8 +27,8 @@ body {
   --color-text: #e1ded7;
   --color-text-rgb: 225, 222, 215;
 
-  --color-bg: #313335;
-  --color-bg-rgb: 49, 51, 53;
+  --color-bg: #2a2c2e;
+  --color-bg-rgb: 42, 44, 46;
 
   font-family: "InterVariable", "Quattro", sans-serif;
   background-color: var(--color-bg);
