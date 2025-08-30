@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <>
-      {/* <WebGLCanvas /> */}
+      <WebGLCanvas />
       <main>
         <div className="intro">
           <Logo />
@@ -34,7 +34,8 @@ export default function Home() {
           </p>
           <p>
             <a href="mailto:hello@e52.ai" className="button">
-              Let’s Build Together ↗
+              Le<span style={{ letterSpacing: "-0.1em" }}>t’</span>s Build
+              Together ↗
             </a>
           </p>
         </div>
