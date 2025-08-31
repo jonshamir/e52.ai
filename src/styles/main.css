@@ -24,11 +24,11 @@ body {
   --color-accent: #3560c6;
   --color-link: var(--color-text);
 
-  --color-text: #e1ded7;
-  --color-text-rgb: 225, 222, 215;
+  --color-text: rgb(94, 94, 92);
+  --color-text-rgb: 94, 94, 92;
 
-  --color-bg: #2a2c2e;
-  --color-bg-rgb: 42, 44, 46;
+  --color-bg: rgb(238, 237, 230);
+  --color-bg-rgb: 238, 237, 230;
 
   --font-titles: "Inter Variable", sans-serif;
   font-family: "Quattro", sans-serif;
@@ -104,12 +104,4 @@ main {
   @media (max-width: 60rem) {
     background-color: rgba(var(--color-bg-rgb), 0.6);
   }
-}
-
-.logo {
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  width: 3rem;
-  height: 3rem;
 }

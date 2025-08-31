@@ -16,11 +16,11 @@ export default function Home() {
 
   return (
     <>
-      <Logo />
-
-      <WebGLCanvas />
+      {/* <WebGLCanvas /> */}
       <main>
         <div className="intro">
+          <Logo />
+
           <h1>We are e52</h1>
           <h4>Embedded Frontier Technology</h4>
           <p>
