@@ -24,13 +24,15 @@ export default function Home() {
           <h3>Embedding Frontier Technology</h3>
           <p>
             At e52, we design bespoke systems powered by cutting-edge AI and
-            data. Our platform is the foundation for transformation —
+            data. Our platform is the foundation for transformation — unifying
+            fragmented data, powering scalable infrastructure, and enabling
+            real-time intelligence.
           </p>
-          <ul>
+          {/* <ul>
             <li>Unifying fragmented data</li>
             <li>Powering scalable infrastructure</li>
             <li>Enabling real-time intelligence</li>
-          </ul>
+          </ul> */}
           <p>
             Together with our partners, we build systems that adapt, endure, and
             create lasting competitive advantage.
