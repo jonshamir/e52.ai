@@ -68,7 +68,7 @@ main {
 .intro {
   padding: 1.5rem;
   margin-top: -8rem;
-  transform: translateX(-5rem);
+  transform: translateX(-2rem);
   max-width: 26rem;
   display: flex;
   flex-direction: column;
