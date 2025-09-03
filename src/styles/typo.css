@@ -30,6 +30,30 @@ li::marker {
   transition: color var(--transition-defaults);
 }
 
+/* Custom bullet for unordered lists */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+ul li::before {
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: 0.55em;
+  width: 0.6em;
+  height: 0.6em;
+  background-image: url("/images/bullet.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 h1,
 h2,
 h3 {

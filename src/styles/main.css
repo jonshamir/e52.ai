@@ -83,6 +83,9 @@ main {
   h3 {
     margin-top: 1rem;
   }
+  ul {
+    margin-top: -0.5rem;
+  }
 
   @media (max-width: 60rem) {
     transform: none;
