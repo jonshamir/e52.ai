@@ -16,19 +16,32 @@ export default function Home() {
 
   return (
     <>
-      <WebGLCanvas />
+      {/* <WebGLCanvas /> */}
       <main>
         <div className="intro">
           <Logo />
 
-          <h4>Modern Tech, Business Outcomes</h4>
+          <h3>Embedding Frontier Technology</h3>
           <p>
-            We are a data consultancy that partners with companies to build and
-            leverage data assets for bottom line impact.
+            At e52, we design bespoke systems powered by cutting-edge AI and
+            data. Our platform is the foundation for transformation — unifying
+            fragmented data, powering scalable infrastructure, and enabling
+            real-time intelligence.
           </p>
-          <br />
+          {/* <ul>
+            <li>Unifying fragmented data</li>
+            <li>Powering scalable infrastructure</li>
+            <li>Enabling real-time intelligence</li>
+          </ul> */}
           <p>
-            <a href="mailto:hello@e52.ai">Contact ↗</a>
+            Together with our partners, we build systems that adapt, endure, and
+            create lasting competitive advantage.
+          </p>
+          <p>
+            <a href="mailto:hello@e52.ai" className="button">
+              Le<span style={{ letterSpacing: "-0.1em" }}>t’</span>s Build
+              Together ↗
+            </a>
           </p>
         </div>
       </main>

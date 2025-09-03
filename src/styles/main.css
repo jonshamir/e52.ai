@@ -14,26 +14,31 @@
 }
 
 body {
-  --content-max-width: 50rem;
+  --content-max-width: 60rem;
   --transition-defaults: 200ms ease-out;
 
   --rounding-small: 0.4rem;
   --rounding-medium: 0.6rem;
   --rounding-full: 999px;
 
-  --color-accent: #3560c6;
-  --color-link: #5e5d5b;
+  --color-accent: rgb(57, 90, 167);
+  --color-accent-rgb: 57, 90, 167;
+  --color-link: var(--color-text);
 
-  --color-text: #5e5d5b;
-  --color-text-rgb: 94, 93, 91;
+  --color-text: rgb(94, 94, 92);
+  --color-text-rgb: 94, 94, 92;
 
-  --color-bg: #eeede6;
-  --color-bg-rgb: 238, 237, 230;
+  --color-bg: rgb(241, 241, 238);
+  --color-bg-rgb: 241, 241, 238;
 
-  font-family: "InterVariable", "Quattro", sans-serif;
+  --font-titles: "Inter Variable", sans-serif;
+  font-family: "Quattro", sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
+
+  outline: 4px solid rgba(var(--color-text-rgb), 0.15);
+  outline-offset: -1rem;
 }
 
 main {
@@ -63,7 +68,7 @@ main {
 .intro {
   padding: 1.5rem;
   margin-top: -8rem;
-  transform: translateX(-5rem);
+  transform: translateX(-2rem);
   max-width: 26rem;
   display: flex;
   flex-direction: column;
@@ -75,8 +80,11 @@ main {
   -webkit-text-stroke-color: var(--color-bg);
   paint-order: stroke fill;
 
-  h4 {
-    margin-top: 2rem;
+  h3 {
+    margin-top: 1rem;
+  }
+  ul {
+    margin-top: -0.5rem;
   }
 
   @media (max-width: 60rem) {
