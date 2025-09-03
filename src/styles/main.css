@@ -37,7 +37,7 @@ body {
   color: var(--color-text);
   overflow: hidden;
 
-  outline: 4px solid rgba(var(--color-text-rgb), 0.2);
+  outline: 4px solid rgba(var(--color-text-rgb), 0.15);
   outline-offset: -1rem;
 }
 
