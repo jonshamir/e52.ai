@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Elements() {
   return (
     <main>
@@ -312,9 +314,11 @@ export default function Elements() {
             </h3>
             <p>
               <a href="https://commons.wikimedia.org/wiki/File:Colouring_pencils.jpg">
-                <img
+                <Image
                   src="https://raw.githubusercontent.com/dohliam/html5-sample-media/master/Colouring_pencils.jpg"
                   alt="Colouring pencils by MichaelMaggs"
+                  width={300}
+                  height={200}
                 />
               </a>
             </p>
@@ -324,9 +328,11 @@ export default function Elements() {
             </h3>
             <figure>
               <a href="https://commons.wikimedia.org/wiki/File:Coloured,_textured_craft_card_edit.jpg">
-                <img
+                <Image
                   src="https://raw.githubusercontent.com/dohliam/html5-sample-media/master/Coloured%2C_textured_craft_card_edit.jpg"
                   alt="Coloured, textured craft card by MichaelMaggs"
+                  width={300}
+                  height={200}
                 />
               </a>
             </figure>
@@ -336,9 +342,11 @@ export default function Elements() {
             </h3>
             <figure>
               <a href="https://commons.wikimedia.org/wiki/File:Opening_chess_position_from_black_side.jpg">
-                <img
+                <Image
                   src="https://raw.githubusercontent.com/dohliam/html5-sample-media/master/Opening_chess_position_from_black_side.jpg"
                   alt="Opening chess position from black side by MichaelMaggs"
+                  width={300}
+                  height={200}
                 />
               </a>
               <figcaption>Here is a caption for this image.</figcaption>

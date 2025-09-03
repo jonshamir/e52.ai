@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import Logo from "@/components/Logo";
-import WebGLCanvas from "@/components/WebGLCanvas";
 
 export default function Home() {
   useEffect(() => {
