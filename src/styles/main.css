@@ -107,6 +107,7 @@ main {
 }
 
 main {
+  padding: 0 1rem;
   @media (max-width: 60rem) {
     background-color: rgba(var(--color-bg-rgb), 0.6);
   }
