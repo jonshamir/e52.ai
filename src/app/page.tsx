@@ -21,13 +21,12 @@ export default function Home() {
         <div className="intro">
           <Logo />
 
-          <h1>We are e52</h1>
-          <h4>Embedded Frontier Technology</h4>
+          <h3>Embedding Frontier Technology</h3>
           <p>
-            We design bespoke systems powered by cutting-edge AI and data. Our
-            platform is the foundation for transformation — unifying fragmented
-            data, powering scalable infrastructure, and enabling real-time
-            intelligence.
+            At e52 we design bespoke systems powered by cutting-edge AI and
+            data. Our platform is the foundation for transformation — unifying
+            fragmented data, powering scalable infrastructure, and enabling
+            real-time intelligence.
           </p>
           <p>
             Together with our partners, we build systems that adapt, endure, and

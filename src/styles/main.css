@@ -21,7 +21,8 @@ body {
   --rounding-medium: 0.6rem;
   --rounding-full: 999px;
 
-  --color-accent: #395ba8;
+  --color-accent: rgb(57, 90, 167);
+  --color-accent-rgb: 57, 90, 167;
   --color-link: var(--color-text);
 
   --color-text: rgb(94, 94, 92);
@@ -35,6 +36,9 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
+
+  outline: 4px solid rgba(var(--color-text-rgb), 0.2);
+  outline-offset: -1rem;
 }
 
 main {
@@ -76,9 +80,8 @@ main {
   -webkit-text-stroke-color: var(--color-bg);
   paint-order: stroke fill;
 
-  h1 {
+  h3 {
     margin-top: 1rem;
-    font-size: 2rem;
   }
 
   @media (max-width: 60rem) {
