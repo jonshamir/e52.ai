@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../styles/main.css";
 
 export const metadata: Metadata = {
-  title: "e52 Technologies",
+  title: "e52",
   description:
     "We are a data consultancy that partners with companies to build and leverage data assets for bottom line impact.",
 };
