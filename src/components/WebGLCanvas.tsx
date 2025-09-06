@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { QUAD_COUNT } from "./canvas/constants";
 import Points from "./canvas/Points";
+import Lines from "./canvas/Lines";
 
 export default function WebGLCanvas() {
   const positions: [number, number][] = Array.from({ length: QUAD_COUNT }, () => [
@@ -20,6 +21,7 @@ export default function WebGLCanvas() {
       style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh" }}
     >
       <Points positions={positions} />
+      <Lines positions={positions} />
     </Canvas>
   );
 }

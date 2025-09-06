@@ -3,7 +3,7 @@
 import { useMemo, useRef, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { QUAD_COLOR, QUAD_RADIUS } from "./constants";
+import { POINT_COLOR, POINT_RADIUS } from "./constants";
 import { useFragmentShader } from "./useFragmentShader";
 import { quadVertexShader } from "./shaders";
 
@@ -58,8 +58,8 @@ export default function Points({ positions }: { positions: [number, number][] })
           u_resolution: { value: new THREE.Vector2(size.width, size.height) },
           u_time: { value: 0 },
           u_cursorPosition: { value: new THREE.Vector2(0, 0) },
-          u_quadRadius: { value: QUAD_RADIUS },
-          u_color: { value: QUAD_COLOR },
+          u_quadRadius: { value: POINT_RADIUS },
+          u_color: { value: POINT_COLOR },
         } as Record<string, any>}
       />
     </instancedMesh>
