@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { QUAD_COLOR, QUAD_RADIUS } from "./constants";
@@ -29,11 +29,17 @@ export default function Quads({ count }: { count: number }) {
     return buffer;
   }, [offsets]);
 
+  // Update resolution uniform when size changes
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.u_resolution.value.set(size.width, size.height);
+    }
+  }, [size.width, size.height]);
+
   useFrame(({ clock, pointer }) => {
     if (materialRef.current) {
       materialRef.current.uniforms.u_time.value = clock.getElapsedTime();
       materialRef.current.uniforms.u_cursorPosition.value.set(pointer.x, pointer.y);
-      materialRef.current.uniforms.u_resolution.value.set(size.width, size.height);
     }
   });
 
