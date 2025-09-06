@@ -13,12 +13,11 @@ export default function InstancedBezierCurves({ count = BEZIER_COUNT }: { count?
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
-  // Generate random bezier curve control points
+  // Generate random quadratic bezier curve control points
   const bezierData = useMemo(() => {
     const p0Array = new Float32Array(count * 2); // start points
-    const p1Array = new Float32Array(count * 2); // control point 1
-    const p2Array = new Float32Array(count * 2); // control point 2  
-    const p3Array = new Float32Array(count * 2); // end points
+    const p1Array = new Float32Array(count * 2); // control points
+    const p2Array = new Float32Array(count * 2); // end points
     
     for (let i = 0; i < count; i++) {
       // Start point
@@ -30,24 +29,23 @@ export default function InstancedBezierCurves({ count = BEZIER_COUNT }: { count?
       // End point
       const endX = (Math.random() - 0.5) * 2;
       const endY = (Math.random() - 0.5) * 2;
-      p3Array[i * 2 + 0] = endX;
-      p3Array[i * 2 + 1] = endY;
+      p2Array[i * 2 + 0] = endX;
+      p2Array[i * 2 + 1] = endY;
       
-      // Control points
-      p1Array[i * 2 + 0] = startX + (Math.random() - 0.5) * 1.0;
-      p1Array[i * 2 + 1] = startY + (Math.random() - 0.5) * 1.0;
-      p2Array[i * 2 + 0] = endX + (Math.random() - 0.5) * 1.0;
-      p2Array[i * 2 + 1] = endY + (Math.random() - 0.5) * 1.0;
+      // Control point (middle point with some offset for curve shape)
+      const midX = (startX + endX) * 0.5;
+      const midY = (startY + endY) * 0.5;
+      p1Array[i * 2 + 0] = midX + (Math.random() - 0.5) * 1.0;
+      p1Array[i * 2 + 1] = midY + (Math.random() - 0.5) * 1.0;
     }
     
-    return { p0Array, p1Array, p2Array, p3Array };
+    return { p0Array, p1Array, p2Array };
   }, [count]);
 
   const instanceAttributes = useMemo(() => ({
     p0: new THREE.InstancedBufferAttribute(bezierData.p0Array, 2),
     p1: new THREE.InstancedBufferAttribute(bezierData.p1Array, 2),
     p2: new THREE.InstancedBufferAttribute(bezierData.p2Array, 2),
-    p3: new THREE.InstancedBufferAttribute(bezierData.p3Array, 2),
   }), [bezierData]);
 
   // Update resolution uniform when size changes
@@ -72,7 +70,6 @@ export default function InstancedBezierCurves({ count = BEZIER_COUNT }: { count?
         <instancedBufferAttribute attach="attributes-instanceP0" args={[instanceAttributes.p0.array, 2]} />
         <instancedBufferAttribute attach="attributes-instanceP1" args={[instanceAttributes.p1.array, 2]} />
         <instancedBufferAttribute attach="attributes-instanceP2" args={[instanceAttributes.p2.array, 2]} />
-        <instancedBufferAttribute attach="attributes-instanceP3" args={[instanceAttributes.p3.array, 2]} />
       </planeGeometry>
       <shaderMaterial
         ref={materialRef}

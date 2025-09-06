@@ -29,9 +29,8 @@ void main() {
 export const bezierVertexShader = /* glsl */ `
 precision mediump float;
 attribute vec2 instanceP0; // bezier start point
-attribute vec2 instanceP1; // bezier control point 1
-attribute vec2 instanceP2; // bezier control point 2
-attribute vec2 instanceP3; // bezier end point
+attribute vec2 instanceP1; // bezier control point
+attribute vec2 instanceP2; // bezier end point
 uniform vec2 u_resolution;     // in pixels
 uniform float u_time;
 uniform vec2 u_cursorPosition; // normalized device coords (-1..1)
@@ -40,7 +39,6 @@ varying vec2 v_localPos;
 varying vec2 v_p0;
 varying vec2 v_p1;
 varying vec2 v_p2;
-varying vec2 v_p3;
 varying float v_distanceFromCenter;
 
 void main() {
@@ -51,14 +49,13 @@ void main() {
   v_p0 = instanceP0;
   v_p1 = instanceP1;
   v_p2 = instanceP2;
-  v_p3 = instanceP3;
 
   // DEBUG: Use simple positioning like Quads component
   // Scale the quad to a fixed size for now
   vec3 scaledPosition = position * 100.0; // Fixed size in pixels
   
-  // Position at center of bezier curve (average of start and end points)
-  vec2 center = (instanceP0 + instanceP3) * 0.5;
+  // Position at center of quadratic bezier curve (average of start and end points)
+  vec2 center = (instanceP0 + instanceP2) * 0.5;
   vec3 worldPosition = scaledPosition + vec3(center * min(u_resolution.x, u_resolution.y) * 0.5, 0.0);
 
   // distance from center for falloff (in world space)
