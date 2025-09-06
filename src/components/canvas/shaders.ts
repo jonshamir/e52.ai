@@ -20,8 +20,13 @@ void main() {
   // Get the center position in view space
   vec3 centerView = (viewMatrix * vec4(centerWorld, 1.0)).xyz;
   
-  // Scale the local position by the radius
-  vec2 scaledLocal = position.xy * (u_quadRadius * 0.01);
+  // Calculate screen-space scaling to maintain consistent size
+  // Distance from camera affects perspective scaling
+  float distance = length(centerView);
+  
+  // Scale by distance to maintain constant screen size
+  // The 0.001 factor converts pixel radius to world units at unit distance
+  vec2 scaledLocal = position.xy * (u_quadRadius * 0.001 * distance);
   
   // In view space, the billboard quad is always aligned to screen
   // x and y are screen-aligned, z faces the camera
