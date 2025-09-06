@@ -10,7 +10,7 @@ import { LINE_COUNT, LINE_WIDTH, POINT_COLOR } from "./constants";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
-export default function Lines({ positions }: { positions: [number, number][] }) {
+export default function Lines({ positions }: { positions: [number, number, number][] }) {
   const { size } = useThree();
   const lineRef = useRef<Line2>(null);
   const materialRef = useRef<LineMaterial>(null);
@@ -30,15 +30,14 @@ export default function Lines({ positions }: { positions: [number, number][] }) 
 
   const points = useMemo(() => {
     const pts: number[] = [];
-    const scale = Math.min(size.width, size.height) * 0.5;
     connections.forEach(([from, to]) => {
       const fromPos = positions[from];
       const toPos = positions[to];
-      pts.push(fromPos[0] * scale, fromPos[1] * scale, 0);
-      pts.push(toPos[0] * scale, toPos[1] * scale, 0);
+      pts.push(fromPos[0], fromPos[1], fromPos[2]);
+      pts.push(toPos[0], toPos[1], toPos[2]);
     });
     return pts;
-  }, [connections, positions, size]);
+  }, [connections, positions]);
 
   const geometry = useMemo(() => {
     const geom = new LineGeometry();

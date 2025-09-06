@@ -1,25 +1,34 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import { QUAD_COUNT } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 
 export default function WebGLCanvas() {
-  const positions: [number, number][] = Array.from({ length: QUAD_COUNT }, () => [
-    Math.random() * 2 - 1,
-    Math.random() * 2 - 1
+  const positions: [number, number, number][] = Array.from({ length: QUAD_COUNT }, () => [
+    Math.random() * 4 - 2,
+    Math.random() * 4 - 2,
+    Math.random() * 4 - 2
   ]);
 
   return (
     <Canvas
-      orthographic
-      camera={{ position: [0, 0, 5], zoom: 1 }}
+      camera={{ position: [0, 0, 5], fov: 60 }}
       dpr={[1, 2]}
       gl={{ alpha: true, premultipliedAlpha: false }}
       className="effect-canvas"
-      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh" }}
+      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", pointerEvents: "all" }}
     >
+      <OrbitControls 
+        enableDamping 
+        dampingFactor={0.05}
+        enableZoom={true}
+        enablePan={true}
+        enableRotate={true}
+        makeDefault
+      />
       <Points positions={positions} />
       <Lines positions={positions} />
     </Canvas>
