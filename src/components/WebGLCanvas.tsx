@@ -17,7 +17,7 @@ export default function WebGLCanvas() {
     <Canvas
       camera={{ position: [0, 0, 5], fov: 60 }}
       dpr={[1, 2]}
-      gl={{ alpha: true, premultipliedAlpha: false, outputColorSpace: "srgb" }}
+      gl={{ alpha: true, premultipliedAlpha: true, outputColorSpace: "srgb" }}
       className="effect-canvas"
       style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", pointerEvents: "all" }}
     >
@@ -29,8 +29,8 @@ export default function WebGLCanvas() {
         enableRotate={true}
         makeDefault
       />
-      <Points positions={positions} />
       <Lines positions={positions} />
+      <Points positions={positions} />
     </Canvas>
   );
 }

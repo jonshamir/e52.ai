@@ -58,7 +58,7 @@ export default function Points({ positions }: { positions: [number, number, numb
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, positions.length]}>
+    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, positions.length]} renderOrder={1}>
       <planeGeometry args={[2, 2, 1, 1]}>
         <instancedBufferAttribute attach="attributes-instanceOffset" args={[instanceOffsetAttr.array, 3]} />
         <instancedBufferAttribute attach="attributes-instanceColor" args={[instanceColorAttr.array, 3]} />
@@ -69,6 +69,7 @@ export default function Points({ positions }: { positions: [number, number, numb
         fragmentShader={quadFragmentShader}
         transparent
         depthWrite={false}
+        depthTest={false}
         uniforms={{
           u_resolution: { value: new THREE.Vector2(size.width, size.height) },
           u_time: { value: 0 },
