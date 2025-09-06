@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 const QUAD_COUNT = 30; // n quads
 // Tweak these two to control quad size and color
-const QUAD_RADIUS = 0.1; // in clip-space units, before aspect correction
+const QUAD_RADIUS = 10; // radius in pixels
 const QUAD_COLOR = new THREE.Color(0.345, 0.345, 0.345);
 
 async function fetchText(url: string): Promise<string> {
@@ -60,9 +60,8 @@ void main() {
   // plane geometry is sized 2x2, so position.xy is in [-1,1]
   v_localPos = position.xy;
 
-  // constant quad radius in clip space, aspect-corrected using resolution
-  vec2 aspect = vec2(u_resolution.y / u_resolution.x, 1.0);
-  vec2 quadRadius = u_quadRadius * aspect;
+  // Convert pixel radius to clip-space radius (NDC): 2px/width and 2px/height
+  vec2 quadRadius = vec2(2.0 * u_quadRadius / u_resolution.x, 2.0 * u_quadRadius / u_resolution.y);
 
   // place quad at per-instance offset
   vec2 worldPos = instanceOffset + position.xy * quadRadius;
