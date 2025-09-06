@@ -11,17 +11,25 @@ void main() {
   // plane geometry is sized 2x2, so position.xy is in [-1,1]
   v_localPos = position.xy;
 
-  // Scale the quad to a reasonable size for perspective camera
-  vec3 scaledPosition = position * (u_quadRadius * 0.01);
+  // Billboard transformation: Make the quad always face the camera
+  // Get the center position of this instance in world space
+  vec3 centerWorld = (modelMatrix * vec4(instanceOffset, 1.0)).xyz;
   
-  // Apply per-instance offset directly (already in world space for perspective camera)
-  vec3 worldPosition = scaledPosition + instanceOffset;
+  // Get the center position in view space
+  vec3 centerView = (viewMatrix * vec4(centerWorld, 1.0)).xyz;
+  
+  // Scale the local position by the radius
+  vec2 scaledLocal = position.xy * (u_quadRadius * 0.01);
+  
+  // In view space, the billboard quad is always aligned to screen
+  // x and y are screen-aligned, z faces the camera
+  vec3 viewPosition = centerView + vec3(scaledLocal, 0.0);
 
   // distance from center for falloff (in world space)
   v_distanceFromCenter = length(instanceOffset);
 
-  // Use Three.js projection matrix for proper perspective projection
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(worldPosition, 1.0);
+  // Transform to clip space
+  gl_Position = projectionMatrix * vec4(viewPosition, 1.0);
 }
 `;
 
