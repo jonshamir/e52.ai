@@ -51,11 +51,16 @@ export default function Lines({ positions }: { positions: [number, number, numbe
     }
   }, [size.width, size.height]);
 
+  const lineColor = useMemo(() => {
+    // Match the Points component by using linear color for consistency
+    return POINT_COLOR.clone().convertSRGBToLinear();
+  }, []);
+
   return (
     <line2 ref={lineRef} geometry={geometry}>
       <lineMaterial
         ref={materialRef}
-        color={POINT_COLOR}
+        color={lineColor}
         linewidth={LINE_WIDTH}
         resolution={[size.width, size.height]}
       />

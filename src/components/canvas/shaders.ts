@@ -1,11 +1,13 @@
 export const quadVertexShader = /* glsl */ `
 attribute vec3 instanceOffset; // per-instance offset in world space
+attribute vec3 instanceColor;  // per-instance color
 uniform vec2 u_resolution;     // in pixels
 uniform float u_time;
 uniform vec2 u_cursorPosition; // normalized device coords (-1..1)
 uniform float u_quadRadius;    // configurable radius (pixels)
 varying vec2 v_localPos;
 varying float v_distanceFromCenter;
+varying vec3 v_color;
 
 void main() {
   // plane geometry is sized 2x2, so position.xy is in [-1,1]
@@ -28,6 +30,9 @@ void main() {
   // distance from center for falloff (in world space)
   v_distanceFromCenter = length(instanceOffset);
 
+  // Pass color to fragment shader
+  v_color = instanceColor;
+
   // Transform to clip space
   gl_Position = projectionMatrix * vec4(viewPosition, 1.0);
 }
@@ -36,9 +41,9 @@ void main() {
 export const quadFragmentShader = /* glsl */ `
 precision mediump float;
 
-uniform vec3 u_color;
 varying vec2 v_localPos;
 varying float v_distanceFromCenter;
+varying vec3 v_color;
 
 void main() {
   // Create circle SDF within the quad
@@ -51,10 +56,11 @@ void main() {
   // float opacityFalloff = exp(-v_distanceFromCenter * 1.0); // Exponential falloff
   float finalAlpha = mask;
   
-  // Apply gamma correction (linear to sRGB)
-  vec3 correctedColor = pow(u_color, vec3(1.0/2.2));
+  // Set the color (vertex colors are in linear space, will be converted to sRGB for display)
+  gl_FragColor = vec4(v_color, clamp(finalAlpha, 0.0, 1.0));
   
-  gl_FragColor = vec4(correctedColor, clamp(finalAlpha, 0.0, 1.0));
+  // Apply Three.js color space conversion for proper display
+  #include <colorspace_fragment>
 }
 `;
 
