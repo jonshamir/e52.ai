@@ -1,266 +1,138 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
 
-async function loadShader(url: string): Promise<string> {
-  const response = await fetch(url);
-  return response.text();
+const QUAD_COUNT = 300; // n quads
+
+async function fetchText(url: string): Promise<string> {
+  const res = await fetch(url);
+  return res.text();
 }
 
-function createShader(
-  gl: WebGLRenderingContext,
-  type: number,
-  source: string
-): WebGLShader | null {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error("Error compiling shader:", gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-
-  return shader;
+function useFragmentShader() {
+  const [frag, setFrag] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchText("/shaders/fragment.glsl").then((text) => {
+      if (!mounted) return;
+      const sanitized = text
+        .split("\n")
+        .filter((line) => !line.trim().startsWith("#extension"))
+        .join("\n");
+      setFrag(sanitized);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  return frag;
 }
 
-function createProgram(
-  gl: WebGLRenderingContext,
-  vertexShader: WebGLShader,
-  fragmentShader: WebGLShader
-): WebGLProgram | null {
-  const program = gl.createProgram();
-  if (!program) return null;
+// Vertex shader compatible with the existing fragment shader varyings
+const quadVertexShader = /* glsl */ `
+attribute vec2 instanceOffset; // per-instance offset in clip space [-1,1]
+uniform vec2 u_resolution;     // in pixels
+uniform float u_time;
+uniform vec2 u_cursorPosition; // normalized device coords (-1..1)
+varying vec2 v_localPos;
+varying float v_distanceFromCenter;
 
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
+void main() {
+  // plane geometry is sized 2x2, so position.xy is in [-1,1]
+  v_localPos = position.xy;
 
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("Error linking program:", gl.getProgramInfoLog(program));
-    gl.deleteProgram(program);
-    return null;
-  }
+  // constant quad radius in clip space, aspect-corrected using resolution
+  float baseR = 0.02;
+  vec2 aspect = vec2(u_resolution.y / u_resolution.x, 1.0);
+  vec2 quadRadius = baseR * aspect;
 
-  return program;
+  // place quad at per-instance offset
+  vec2 worldPos = instanceOffset + position.xy * quadRadius;
+
+  // distance from center for falloff (matches fragment’s use)
+  v_distanceFromCenter = length(instanceOffset);
+
+  gl_Position = vec4(worldPos, 0.0, 1.0);
 }
+`;
 
-const DOT_COUNT = 300;
+function Quads({ count }: { count: number }) {
+  const fragmentShader = useFragmentShader();
+  const { size } = useThree();
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+
+  // Random positions in clip space [-1,1]
+  const offsets = useMemo(() => {
+    const arr = new Float32Array(count * 2);
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * 2 - 1;
+      const y = Math.random() * 2 - 1;
+      arr[i * 2 + 0] = x;
+      arr[i * 2 + 1] = y;
+    }
+    return arr;
+  }, [count]);
+
+  // Create per-instance buffer attribute for offsets
+  const instanceOffsetAttr = useMemo(() => {
+    const buffer = new THREE.InstancedBufferAttribute(offsets, 2);
+    return buffer;
+  }, [offsets]);
+
+  // Update uniforms
+  useFrame(({ clock, pointer }) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.u_time.value = clock.getElapsedTime();
+      // pointer in NDC (-1..1)
+      materialRef.current.uniforms.u_cursorPosition.value.set(pointer.x, pointer.y);
+      materialRef.current.uniforms.u_resolution.value.set(size.width, size.height);
+    }
+  });
+
+  // Early-out until fragment shader is loaded
+  if (!fragmentShader) return null;
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]}>
+      {/* Plane 2x2 so vertex positions are in [-1,1] */}
+      <planeGeometry args={[2, 2, 1, 1]}>
+        {/* Attach per-instance offsets */}
+        <instancedBufferAttribute
+          attach="attributes-instanceOffset"
+          args={[instanceOffsetAttr.array, 2]}
+        />
+      </planeGeometry>
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={quadVertexShader}
+        fragmentShader={fragmentShader}
+        transparent
+        depthWrite={false}
+        uniforms={
+          {
+            u_resolution: { value: new THREE.Vector2(size.width, size.height) },
+            u_time: { value: 0 },
+            u_cursorPosition: { value: new THREE.Vector2(0, 0) },
+          } as Record<string, any>
+        }
+      />
+    </instancedMesh>
+  );
+}
 
 export default function WebGLCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mousePosRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const gl = canvas.getContext("webgl", {
-      alpha: true,
-      premultipliedAlpha: false,
-    });
-    if (!gl) {
-      console.error("WebGL not supported");
-      return;
-    }
-
-    // Enable the standard derivatives extension for fwidth()
-    const ext = gl.getExtension("OES_standard_derivatives");
-    if (!ext) {
-      console.warn("OES_standard_derivatives extension not supported");
-    }
-
-    // Enable instanced arrays extension
-    const instancedArraysExt = gl.getExtension("ANGLE_instanced_arrays");
-    if (!instancedArraysExt) {
-      console.error("ANGLE_instanced_arrays extension not supported");
-      return;
-    }
-
-    async function initWebGL() {
-      if (!gl || !canvas) return;
-
-      const vertexShaderSource = await loadShader("/shaders/vertex.glsl");
-      const fragmentShaderSource = await loadShader("/shaders/fragment.glsl");
-
-      const vertexShader = createShader(
-        gl,
-        gl.VERTEX_SHADER,
-        vertexShaderSource
-      );
-      const fragmentShader = createShader(
-        gl,
-        gl.FRAGMENT_SHADER,
-        fragmentShaderSource
-      );
-
-      if (!vertexShader || !fragmentShader) return;
-
-      const program = createProgram(gl, vertexShader, fragmentShader);
-      if (!program) return;
-
-      const positionAttributeLocation = gl.getAttribLocation(
-        program,
-        "a_position"
-      );
-      const dotIndexAttributeLocation = gl.getAttribLocation(
-        program,
-        "a_dotIndex"
-      );
-
-      const resolutionUniformLocation = gl.getUniformLocation(
-        program,
-        "u_resolution"
-      );
-      const timeUniformLocation = gl.getUniformLocation(program, "u_time");
-      const spiralCenterUniformLocation = gl.getUniformLocation(
-        program,
-        "u_spiralCenter"
-      );
-      const cursorPositionUniformLocation = gl.getUniformLocation(
-        program,
-        "u_cursorPosition"
-      );
-
-      // Create quad vertices (2 triangles)
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      const positions = [
-        -1.0,
-        -1.0, // Triangle 1
-        1.0,
-        -1.0,
-        -1.0,
-        1.0,
-        -1.0,
-        1.0, // Triangle 2
-        1.0,
-        -1.0,
-        1.0,
-        1.0,
-      ];
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW
-      );
-
-      // Create instance data (dot indices 0-199)
-      const instanceBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-      const dotIndices = Array.from({ length: DOT_COUNT }, (_, i) => i);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array(dotIndices),
-        gl.STATIC_DRAW
-      );
-
-      function resize() {
-        if (!canvas || !gl) return;
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
-        gl.viewport(0, 0, canvas.width, canvas.height);
-      }
-
-      function render(time: number = 0) {
-        if (!gl || !canvas) return;
-
-        // Enable blending for transparency
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-        // Clear with transparent background
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.useProgram(program);
-
-        gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
-        gl.uniform1f(timeUniformLocation, time * 0.001);
-        gl.uniform2f(spiralCenterUniformLocation, 0.0, 0.0); // Default: original offset
-        
-        // Convert mouse position to normalized coordinates (-1 to 1)
-        const normalizedX = (mousePosRef.current.x / canvas.width) * 2 - 1;
-        const normalizedY = -((mousePosRef.current.y / canvas.height) * 2 - 1); // Flip Y
-        gl.uniform2f(cursorPositionUniformLocation, normalizedX, normalizedY);
-
-        // Set up position attribute (per vertex)
-        gl.enableVertexAttribArray(positionAttributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.vertexAttribPointer(
-          positionAttributeLocation,
-          2,
-          gl.FLOAT,
-          false,
-          0,
-          0
-        );
-
-        // Set up dot index attribute (per instance)
-        gl.enableVertexAttribArray(dotIndexAttributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-        gl.vertexAttribPointer(
-          dotIndexAttributeLocation,
-          1,
-          gl.FLOAT,
-          false,
-          0,
-          0
-        );
-        instancedArraysExt!.vertexAttribDivisorANGLE(
-          dotIndexAttributeLocation,
-          1
-        );
-
-        // Draw instances of 6 vertices each (2 triangles per dot)
-        instancedArraysExt!.drawArraysInstancedANGLE(
-          gl.TRIANGLES,
-          0,
-          6,
-          DOT_COUNT
-        );
-      }
-
-      resize();
-
-      let animationId: number;
-
-      function animate(time: number) {
-        render(time);
-        animationId = requestAnimationFrame(animate);
-      }
-
-      animationId = requestAnimationFrame(animate);
-
-      const handleResize = () => {
-        resize();
-      };
-
-      const handleMouseMove = (event: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        mousePosRef.current.x = (event.clientX - rect.left) * dpr;
-        mousePosRef.current.y = (event.clientY - rect.top) * dpr;
-      };
-
-      window.addEventListener("resize", handleResize);
-      document.addEventListener("mousemove", handleMouseMove);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        document.removeEventListener("mousemove", handleMouseMove);
-        cancelAnimationFrame(animationId);
-      };
-    }
-
-    initWebGL();
-  }, []);
-
-  return <canvas ref={canvasRef} className="effect-canvas" />;
+  return (
+    <Canvas
+      orthographic
+      camera={{ position: [0, 0, 5], zoom: 1 }}
+      gl={{ alpha: true, premultipliedAlpha: false }}
+      className="effect-canvas"
+      style={{ width: "100%", height: "100%" }}
+    >
+      <Quads count={QUAD_COUNT} />
+    </Canvas>
+  );
 }
