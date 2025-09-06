@@ -17,8 +17,8 @@ export function useFragmentShader() {
         .join("\n");
       // Replace hardcoded color with uniform u_color while preserving alpha
       sanitized = sanitized.replace(
-        /vec4\(\s*0\.345\s*,\s*0\.345\s*,\s*0\.345\s*,\s*clamp\(finalAlpha,\s*0\.0,\s*1\.0\)\s*\)/,
-        "vec4(u_color, clamp(finalAlpha, 0.0, 1.0))"
+        /gl_FragColor\s*=\s*vec4\(\s*0\.345\s*,\s*0\.345\s*,\s*0\.345\s*,\s*clamp\(finalAlpha,\s*0\.0,\s*1\.0\)\s*\)\s*;/,
+        "gl_FragColor = vec4(u_color, clamp(finalAlpha, 0.0, 1.0));"
       );
       if (!/uniform\s+vec3\s+u_color\s*;/.test(sanitized)) {
         sanitized = sanitized.replace(

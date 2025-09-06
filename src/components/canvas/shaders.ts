@@ -33,6 +33,28 @@ void main() {
 }
 `;
 
+export const quadFragmentShader = /* glsl */ `
+precision mediump float;
+
+uniform vec3 u_color;
+varying vec2 v_localPos;
+varying float v_distanceFromCenter;
+
+void main() {
+  // Create circle SDF within the quad
+  float d = length(v_localPos) - 1.0;
+  float aaNoise = fwidth(d);
+  
+  float mask = 1.0 - smoothstep(-aaNoise, 0.0, d);
+  
+  // Apply opacity falloff based on distance from center
+  // float opacityFalloff = exp(-v_distanceFromCenter * 1.0); // Exponential falloff
+  float finalAlpha = mask;
+  
+  gl_FragColor = vec4(u_color, clamp(finalAlpha, 0.0, 1.0));
+}
+`;
+
 export const bezierVertexShader = /* glsl */ `
 precision mediump float;
 attribute vec2 instanceP0; // bezier start point

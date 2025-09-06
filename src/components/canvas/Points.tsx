@@ -4,11 +4,9 @@ import { useMemo, useRef, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { POINT_COLOR, POINT_RADIUS } from "./constants";
-import { useFragmentShader } from "./useFragmentShader";
-import { quadVertexShader } from "./shaders";
+import { quadVertexShader, quadFragmentShader } from "./shaders";
 
 export default function Points({ positions }: { positions: [number, number, number][] }) {
-  const fragmentShader = useFragmentShader();
   const { size } = useThree();
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
@@ -42,8 +40,6 @@ export default function Points({ positions }: { positions: [number, number, numb
     }
   });
 
-  if (!fragmentShader) return null;
-
   return (
     <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, positions.length]}>
       <planeGeometry args={[2, 2, 1, 1]}>
@@ -52,7 +48,7 @@ export default function Points({ positions }: { positions: [number, number, numb
       <shaderMaterial
         ref={materialRef}
         vertexShader={quadVertexShader}
-        fragmentShader={fragmentShader}
+        fragmentShader={quadFragmentShader}
         transparent
         depthWrite={false}
         uniforms={{
