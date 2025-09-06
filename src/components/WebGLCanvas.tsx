@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { QUAD_COUNT } from "./canvas/constants";
-import BezierCurveLine from "./canvas/BezierCurveLine";
+import InstancedBezierCurves from "./canvas/InstancedBezierCurves";
 import Quads from "./canvas/Quads";
 
 export default function WebGLCanvas() {
@@ -15,7 +15,7 @@ export default function WebGLCanvas() {
       className="effect-canvas"
       style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh" }}
     >
-      <BezierCurveLine />
+      <InstancedBezierCurves />
       <Quads count={QUAD_COUNT} />
     </Canvas>
   );
