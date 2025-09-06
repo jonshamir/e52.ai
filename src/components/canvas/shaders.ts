@@ -51,7 +51,10 @@ void main() {
   // float opacityFalloff = exp(-v_distanceFromCenter * 1.0); // Exponential falloff
   float finalAlpha = mask;
   
-  gl_FragColor = vec4(u_color, clamp(finalAlpha, 0.0, 1.0));
+  // Apply gamma correction (linear to sRGB)
+  vec3 correctedColor = pow(u_color, vec3(1.0/2.2));
+  
+  gl_FragColor = vec4(correctedColor, clamp(finalAlpha, 0.0, 1.0));
 }
 `;
 
