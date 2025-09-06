@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const QUAD_COUNT = 300; // n quads
+const QUAD_COUNT = 30; // n quads
+// Tweak these two to control quad size and color
+const QUAD_RADIUS = 0.1; // in clip-space units, before aspect correction
+const QUAD_COLOR = new THREE.Color(0.345, 0.345, 0.345);
 
 async function fetchText(url: string): Promise<string> {
   const res = await fetch(url);
@@ -17,10 +20,23 @@ function useFragmentShader() {
     let mounted = true;
     fetchText("/shaders/fragment.glsl").then((text) => {
       if (!mounted) return;
-      const sanitized = text
+      let sanitized = text
         .split("\n")
         .filter((line) => !line.trim().startsWith("#extension"))
         .join("\n");
+      // Inject uniform to control color
+      // Replace the final color vec4 with a uniform-driven color keeping alpha
+      sanitized = sanitized.replace(
+        /vec4\(\s*0\.345\s*,\s*0\.345\s*,\s*0\.345\s*,\s*clamp\(finalAlpha,\s*0\.0,\s*1\.0\)\s*\)/,
+        "vec4(u_color, clamp(finalAlpha, 0.0, 1.0))"
+      );
+      // Prepend uniform declaration if not present
+      if (!/uniform\s+vec3\s+u_color\s*;/.test(sanitized)) {
+        sanitized = sanitized.replace(
+          /precision\s+mediump\s+float\s*;\s*/,
+          "precision mediump float;\nuniform vec3 u_color;\n"
+        );
+      }
       setFrag(sanitized);
     });
     return () => {
@@ -36,6 +52,7 @@ attribute vec2 instanceOffset; // per-instance offset in clip space [-1,1]
 uniform vec2 u_resolution;     // in pixels
 uniform float u_time;
 uniform vec2 u_cursorPosition; // normalized device coords (-1..1)
+uniform float u_quadRadius;     // configurable radius
 varying vec2 v_localPos;
 varying float v_distanceFromCenter;
 
@@ -44,9 +61,8 @@ void main() {
   v_localPos = position.xy;
 
   // constant quad radius in clip space, aspect-corrected using resolution
-  float baseR = 0.02;
   vec2 aspect = vec2(u_resolution.y / u_resolution.x, 1.0);
-  vec2 quadRadius = baseR * aspect;
+  vec2 quadRadius = u_quadRadius * aspect;
 
   // place quad at per-instance offset
   vec2 worldPos = instanceOffset + position.xy * quadRadius;
@@ -116,6 +132,8 @@ function Quads({ count }: { count: number }) {
             u_resolution: { value: new THREE.Vector2(size.width, size.height) },
             u_time: { value: 0 },
             u_cursorPosition: { value: new THREE.Vector2(0, 0) },
+            u_quadRadius: { value: QUAD_RADIUS },
+            u_color: { value: QUAD_COLOR },
           } as Record<string, any>
         }
       />
