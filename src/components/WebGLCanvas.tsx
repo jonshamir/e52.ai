@@ -2,9 +2,14 @@
 
 import { Canvas } from "@react-three/fiber";
 import { QUAD_COUNT } from "./canvas/constants";
-import Quads from "./canvas/Quads";
+import Points from "./canvas/Points";
 
 export default function WebGLCanvas() {
+  const positions: [number, number][] = Array.from({ length: QUAD_COUNT }, () => [
+    Math.random() * 2 - 1,
+    Math.random() * 2 - 1
+  ]);
+
   return (
     <Canvas
       orthographic
@@ -14,7 +19,7 @@ export default function WebGLCanvas() {
       className="effect-canvas"
       style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh" }}
     >
-      <Quads count={QUAD_COUNT} />
+      <Points positions={positions} />
     </Canvas>
   );
 }

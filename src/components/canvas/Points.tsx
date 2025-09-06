@@ -7,22 +7,20 @@ import { QUAD_COLOR, QUAD_RADIUS } from "./constants";
 import { useFragmentShader } from "./useFragmentShader";
 import { quadVertexShader } from "./shaders";
 
-export default function Quads({ count }: { count: number }) {
+export default function Points({ positions }: { positions: [number, number][] }) {
   const fragmentShader = useFragmentShader();
   const { size } = useThree();
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   const offsets = useMemo(() => {
-    const arr = new Float32Array(count * 2);
-    for (let i = 0; i < count; i++) {
-      const x = Math.random() * 2 - 1;
-      const y = Math.random() * 2 - 1;
-      arr[i * 2 + 0] = x;
-      arr[i * 2 + 1] = y;
+    const arr = new Float32Array(positions.length * 2);
+    for (let i = 0; i < positions.length; i++) {
+      arr[i * 2 + 0] = positions[i][0];
+      arr[i * 2 + 1] = positions[i][1];
     }
     return arr;
-  }, [count]);
+  }, [positions]);
 
   const instanceOffsetAttr = useMemo(() => {
     const buffer = new THREE.InstancedBufferAttribute(offsets, 2);
@@ -46,7 +44,7 @@ export default function Quads({ count }: { count: number }) {
   if (!fragmentShader) return null;
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]}>
+    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, positions.length]}>
       <planeGeometry args={[2, 2, 1, 1]}>
         <instancedBufferAttribute attach="attributes-instanceOffset" args={[instanceOffsetAttr.array, 2]} />
       </planeGeometry>
