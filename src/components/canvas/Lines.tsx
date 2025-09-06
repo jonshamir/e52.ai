@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
-import { LINE_COUNT, LINE_WIDTH, POINT_COLOR } from "./constants";
+import { LINE_COUNT, LINE_WIDTH, LINE_COLOR } from "./constants";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
@@ -52,8 +52,8 @@ export default function Lines({ positions }: { positions: [number, number, numbe
   }, [size.width, size.height]);
 
   const lineColor = useMemo(() => {
-    // Match the Points component by using linear color for consistency
-    return POINT_COLOR.clone().convertSRGBToLinear();
+    // Use dedicated line color with linear space conversion
+    return LINE_COLOR.clone().convertSRGBToLinear();
   }, []);
 
   return (
