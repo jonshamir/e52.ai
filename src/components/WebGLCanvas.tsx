@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { QUAD_COUNT } from "./canvas/constants";
+import { QUAD_COUNT, LINE_COLOR } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";
@@ -40,8 +40,8 @@ export default function WebGLCanvas() {
         radius={2}
         tickCount={60}
         tickLength={0.15}
-        tickWidth={1.5}
-        tickColor={"red"}
+        tickWidth={3}
+        tickColor={LINE_COLOR}
       />{" "}
       <Lines positions={positions} />
       <Points positions={positions} />
