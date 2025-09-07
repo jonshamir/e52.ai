@@ -35,14 +35,7 @@ export default function WebGLCanvas() {
         enableRotate={true}
         makeDefault
       />
-      <TickMarks
-        center={[0, 0, 0]}
-        radius={2}
-        tickCount={60}
-        tickLength={0.15}
-        tickWidth={3}
-        tickColor={LINE_COLOR}
-      />{" "}
+      <TickMarks tickCount={60} tickLength={0.15} tickWidth={3} />
       <Lines positions={positions} />
       <Points positions={positions} />
     </Canvas>

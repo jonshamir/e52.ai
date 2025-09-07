@@ -6,27 +6,28 @@ import * as THREE from "three";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
+import { LINE_COLOR } from "./constants";
 
 extend({ LineSegments2, LineMaterial, LineSegmentsGeometry });
 
 type TickMarksProps = {
-  center: [number, number, number];
-  radius: number;
+  center?: [number, number, number];
+  radius?: number;
   tickCount: number;
   tickLength: number;
   tickWidth: number;
   tickSpacingRadians?: number; // optional; if provided, overrides uniform distribution
-  tickColor: THREE.Color | string | number;
+  tickColor?: THREE.Color | string | number;
 };
 
 export default function TickMarks({
-  center,
-  radius,
+  center = [0, 0, 0],
+  radius = 2,
   tickCount,
   tickLength,
   tickWidth,
   tickSpacingRadians,
-  tickColor,
+  tickColor = LINE_COLOR,
 }: TickMarksProps) {
   const { size } = useThree();
   const materialRef = useRef<LineMaterial | null>(null);
