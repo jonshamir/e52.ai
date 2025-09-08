@@ -36,7 +36,8 @@ export default function WebGLCanvas() {
         makeDefault
       />
       <TickMarks tickCount={60} tickLength={0.15} tickWidth={3} />
-      <Lines positions={positions} />
+      <TickMarks tickCount={12} tickLength={2} tickWidth={3} />
+      {/* <Lines positions={positions} /> */}
       <Points positions={positions} />
     </Canvas>
   );
