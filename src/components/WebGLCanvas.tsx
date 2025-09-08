@@ -1,11 +1,12 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Circle, OrbitControls } from "@react-three/drei";
 import { QUAD_COUNT, LINE_COLOR } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";
+import CircleLine from "./canvas/CircleLine";
 
 export default function WebGLCanvas() {
   const positions: [number, number, number][] = Array.from(
@@ -37,6 +38,7 @@ export default function WebGLCanvas() {
       />
       <TickMarks tickCount={60} tickLength={0.15} tickWidth={3} />
       <TickMarks tickCount={12} tickLength={2} tickWidth={3} />
+      <CircleLine center={[0, 0, 0]} radius={2} lineWidth={3} />
       {/* <Lines positions={positions} /> */}
       <Points positions={positions} />
     </Canvas>
