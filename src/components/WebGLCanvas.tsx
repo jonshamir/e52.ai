@@ -6,6 +6,7 @@ import { QUAD_COUNT, LINE_COLOR } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";
+import { LINE_WIDTH } from "./canvas/constants";
 import CircleLine from "./canvas/CircleLine";
 
 export default function WebGLCanvas() {
@@ -36,9 +37,9 @@ export default function WebGLCanvas() {
         enableRotate={true}
         makeDefault
       />
-      <TickMarks tickCount={60} tickLength={0.15} tickWidth={3} />
-      <TickMarks tickCount={12} tickLength={2} tickWidth={3} />
-      <CircleLine center={[0, 0, 0]} radius={2} lineWidth={3} />
+      <TickMarks tickCount={60} tickLength={0.15} tickWidth={LINE_WIDTH} />
+      <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
+      <CircleLine center={[0, 0, 0]} radius={2} lineWidth={LINE_WIDTH} />
       {/* <Lines positions={positions} /> */}
       <Points positions={positions} />
     </Canvas>
