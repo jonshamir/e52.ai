@@ -10,20 +10,63 @@ import { LINE_COUNT, LINE_WIDTH, LINE_COLOR } from "./constants";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
-export default function Lines({ positions }: { positions: [number, number, number][] }) {
+export default function Lines({
+  positions,
+}: {
+  positions: [number, number, number][];
+}) {
   const { size } = useThree();
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
 
   const connections = useMemo(() => {
     const lines: [number, number][] = [];
-    for (let i = 0; i < Math.min(LINE_COUNT, positions.length - 1); i++) {
-      const from = Math.floor(Math.random() * positions.length);
-      let to = Math.floor(Math.random() * positions.length);
-      while (to === from) {
-        to = Math.floor(Math.random() * positions.length);
+
+    // Group positions by z-coordinate (layer)
+    const layers: { [z: number]: number[] } = {};
+    positions.forEach((pos, index) => {
+      const z = pos[2];
+      if (!layers[z]) {
+        layers[z] = [];
       }
-      lines.push([from, to]);
+      layers[z].push(index);
+    });
+
+    // Get sorted z values (layers)
+    const sortedZValues = Object.keys(layers)
+      .map(Number)
+      .sort((a, b) => a - b);
+
+    // Generate connections only between neighboring layers
+    let connectionCount = 0;
+    const maxConnections = Math.min(LINE_COUNT, positions.length - 1);
+
+    for (
+      let i = 0;
+      i < sortedZValues.length - 1 && connectionCount < maxConnections;
+      i++
+    ) {
+      const currentLayer = layers[sortedZValues[i]];
+      const nextLayer = layers[sortedZValues[i + 1]];
+
+      // Create connections between current and next layer
+      const connectionsBetweenLayers = Math.min(
+        Math.floor(maxConnections / (sortedZValues.length - 1)),
+        currentLayer.length * nextLayer.length
+      );
+
+      for (
+        let j = 0;
+        j < connectionsBetweenLayers && connectionCount < maxConnections;
+        j++
+      ) {
+        const from =
+          currentLayer[Math.floor(Math.random() * currentLayer.length)];
+        const to = nextLayer[Math.floor(Math.random() * nextLayer.length)];
+        lines.push([from, to]);
+        connectionCount++;
+      }
     }
+
     return lines;
   }, [positions]);
 
@@ -33,7 +76,13 @@ export default function Lines({ positions }: { positions: [number, number, numbe
     const SEGMENTS = 24; // segments per curve
 
     // Helper to evaluate cubic Bezier at t
-    const cubic = (t: number, p0: THREE.Vector3, c1: THREE.Vector3, c2: THREE.Vector3, p3: THREE.Vector3): THREE.Vector3 => {
+    const cubic = (
+      t: number,
+      p0: THREE.Vector3,
+      c1: THREE.Vector3,
+      c2: THREE.Vector3,
+      p3: THREE.Vector3
+    ): THREE.Vector3 => {
       const it = 1 - t;
       const it2 = it * it;
       const t2 = t * t;
@@ -105,12 +154,14 @@ export default function Lines({ positions }: { positions: [number, number, numbe
         <line2 key={idx} geometry={geometry}>
           {/* @ts-expect-error three-stdlib element */}
           <lineMaterial
-            ref={(ref: LineMaterial | null) => (materialRefs.current[idx] = ref)}
+            ref={(ref: LineMaterial | null) =>
+              (materialRefs.current[idx] = ref)
+            }
             color={lineColor}
             linewidth={LINE_WIDTH}
             resolution={[size.width, size.height]}
           />
-        {/* @ts-expect-error three-stdlib element */}
+          {/* @ts-expect-error three-stdlib element */}
         </line2>
       ))}
     </group>
