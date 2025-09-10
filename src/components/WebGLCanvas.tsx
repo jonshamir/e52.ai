@@ -15,6 +15,20 @@ export default function WebGLCanvas() {
     () => [Math.random() * 4 - 2, Math.random() * 4 - 2, Math.random() * 4 - 2]
   );
 
+  const renderConcentricCircles = (
+    center: [number, number, number],
+    radii: number[]
+  ) => {
+    return radii.map((radius, index) => (
+      <CircleLine
+        key={index}
+        center={center}
+        radius={radius}
+        lineWidth={LINE_WIDTH}
+      />
+    ));
+  };
+
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 60 }}
@@ -39,7 +53,8 @@ export default function WebGLCanvas() {
       />
       <TickMarks tickCount={60} tickLength={0.15} tickWidth={LINE_WIDTH} />
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
-      <CircleLine center={[0, 0, 0]} radius={2} lineWidth={LINE_WIDTH} />
+      {/* 5 concentric circles with radii from 0.5 to 2.5 */}
+      {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0, 2.5])}
       {/* <Lines positions={positions} /> */}
       <Points positions={positions} />
     </Canvas>
