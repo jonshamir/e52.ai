@@ -99,7 +99,7 @@ main {
   width: 100vw;
   height: 100vh;
   z-index: 0;
-  /* transform: translateX(15%); */
+  /* transform: translate(15%, -5%); */
 
   @media (max-width: 60rem) {
     /* transform: translateX(15%) translateY(10%); */

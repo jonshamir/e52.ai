@@ -28,11 +28,6 @@ export default function Home() {
             fragmented data, powering scalable infrastructure, and enabling
             real-time intelligence.
           </p>
-          {/* <ul>
-            <li>Unifying fragmented data</li>
-            <li>Powering scalable infrastructure</li>
-            <li>Enabling real-time intelligence</li>
-          </ul> */}
           <p>
             Together with our partners, we build systems that adapt, endure, and
             create lasting competitive advantage.
