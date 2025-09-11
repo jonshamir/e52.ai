@@ -7,6 +7,7 @@ import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LINE_COLOR } from "./constants";
+import { useCirclesOpacity } from "./useViewDependentOpacity";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
@@ -27,6 +28,7 @@ export default function CircleLine({
 }: CircleLineProps) {
   const { size } = useThree();
   const materialRef = useRef<LineMaterial | null>(null);
+  const opacity = useCirclesOpacity();
 
   const colorLinear = useMemo(() => {
     const c =
@@ -67,6 +69,15 @@ export default function CircleLine({
     }
   }, [size.width, size.height]);
 
+  // Update material opacity when opacity changes
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.opacity = opacity;
+      materialRef.current.transparent = opacity < 1.0;
+      materialRef.current.needsUpdate = true;
+    }
+  }, [opacity]);
+
   return (
     // @ts-expect-error three-stdlib element
     <line2 geometry={geometry}>
@@ -76,6 +87,8 @@ export default function CircleLine({
         color={colorLinear}
         linewidth={lineWidth}
         resolution={[size.width, size.height]}
+        transparent={true}
+        opacity={opacity}
       />
       {/* @ts-expect-error three-stdlib element */}
     </line2>

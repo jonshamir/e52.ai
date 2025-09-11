@@ -7,6 +7,7 @@ import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LINE_COUNT, LINE_WIDTH, LINE_COLOR } from "./constants";
+import { useLinesOpacity } from "./useViewDependentOpacity";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
@@ -17,6 +18,7 @@ export default function Lines({
 }) {
   const { size } = useThree();
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
+  const opacity = useLinesOpacity();
 
   const connections = useMemo(() => {
     const lines: [number, number][] = [];
@@ -147,6 +149,17 @@ export default function Lines({
     return LINE_COLOR.clone().convertSRGBToLinear();
   }, []);
 
+  // Update material opacity when opacity changes
+  useEffect(() => {
+    materialRefs.current.forEach((mat) => {
+      if (mat) {
+        mat.opacity = opacity;
+        mat.transparent = opacity < 1.0;
+        mat.needsUpdate = true;
+      }
+    });
+  }, [opacity]);
+
   return (
     <group>
       {geometries.map((geometry, idx) => (
@@ -160,6 +173,8 @@ export default function Lines({
             color={lineColor}
             linewidth={LINE_WIDTH}
             resolution={[size.width, size.height]}
+            transparent={true}
+            opacity={opacity}
           />
           {/* @ts-expect-error three-stdlib element */}
         </line2>

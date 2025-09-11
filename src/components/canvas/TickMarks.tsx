@@ -7,6 +7,7 @@ import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
 import { LINE_COLOR } from "./constants";
+import { useCirclesOpacity } from "./useViewDependentOpacity";
 
 extend({ LineSegments2, LineMaterial, LineSegmentsGeometry });
 
@@ -31,6 +32,7 @@ export default function TickMarks({
 }: TickMarksProps) {
   const { size } = useThree();
   const materialRef = useRef<LineMaterial | null>(null);
+  const opacity = useCirclesOpacity();
 
   const colorLinear = useMemo(() => {
     const color =
@@ -86,6 +88,15 @@ export default function TickMarks({
     }
   }, [size.width, size.height]);
 
+  // Update material opacity when opacity changes
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.opacity = opacity;
+      materialRef.current.transparent = opacity < 1.0;
+      materialRef.current.needsUpdate = true;
+    }
+  }, [opacity]);
+
   return (
     // @ts-expect-error three-stdlib element
     <lineSegments2 geometry={geometry}>
@@ -95,6 +106,8 @@ export default function TickMarks({
         color={colorLinear}
         linewidth={tickWidth}
         resolution={[size.width, size.height]}
+        transparent={true}
+        opacity={opacity}
       />
       {/* @ts-expect-error three-stdlib element */}
     </lineSegments2>
