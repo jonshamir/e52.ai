@@ -8,6 +8,7 @@ import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";
 import { LINE_WIDTH } from "./canvas/constants";
 import CircleLine from "./canvas/CircleLine";
+import { OrbitalMotionProvider } from "./canvas/OrbitalMotionProvider";
 
 export default function WebGLCanvas() {
   // Generate random positions on concentric circles
@@ -82,8 +83,10 @@ export default function WebGLCanvas() {
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
       {/* 5 concentric circles with radii from 0.5 to 2.5 */}
       {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0, 2.5])}
-      <Lines initialPositions={positions} />
-      <Points initialPositions={positions} />
+      <OrbitalMotionProvider initialPositions={positions}>
+        <Lines />
+        <Points />
+      </OrbitalMotionProvider>
     </Canvas>
   );
 }

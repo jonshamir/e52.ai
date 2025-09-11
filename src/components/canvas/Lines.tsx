@@ -8,16 +8,12 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LINE_COUNT, LINE_WIDTH, LINE_COLOR } from "./constants";
 import { useLinesOpacity } from "./useViewDependentOpacity";
-import { useOrbitalMotion } from "./useOrbitalMotion";
+import { useOrbitalMotion } from "./OrbitalMotionProvider";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
-export default function Lines({
-  initialPositions,
-}: {
-  initialPositions: [number, number, number][];
-}) {
-  const { positions } = useOrbitalMotion(initialPositions);
+export default function Lines() {
+  const { positions } = useOrbitalMotion();
   const { size } = useThree();
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
   const opacity = useLinesOpacity();

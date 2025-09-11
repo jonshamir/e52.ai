@@ -5,14 +5,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { POINT_COLOR, POINT_RADIUS } from "./constants";
 import { quadVertexShader, quadFragmentShader } from "./shaders";
-import { useOrbitalMotion } from "./useOrbitalMotion";
+import { useOrbitalMotion } from "./OrbitalMotionProvider";
 
-export default function Points({
-  initialPositions,
-}: {
-  initialPositions: [number, number, number][];
-}) {
-  const { positions } = useOrbitalMotion(initialPositions);
+export default function Points() {
+  const { positions } = useOrbitalMotion();
   const { size } = useThree();
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
