@@ -9,6 +9,7 @@ import TickMarks from "./canvas/TickMarks";
 import { LINE_WIDTH } from "./canvas/constants";
 import CircleLine from "./canvas/CircleLine";
 import { OrbitalMotionProvider } from "./canvas/OrbitalMotionProvider";
+import CameraController from "./canvas/CameraController";
 
 export default function WebGLCanvas() {
   // Generate random positions on concentric circles
@@ -71,9 +72,10 @@ export default function WebGLCanvas() {
         dampingFactor={0.05}
         enableZoom={true}
         enablePan={true}
-        enableRotate={true}
+        enableRotate={false}
         makeDefault
       />
+      <CameraController />
       <TickMarks
         radius={2.3}
         tickCount={60}

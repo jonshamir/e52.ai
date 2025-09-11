@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 export const QUAD_COUNT = 30; // n points
 export const POINT_RADIUS = 6; // radius in pixels
-export const POINT_COLOR = new THREE.Color(0.6, 0.6, 0.6);
+export const POINT_COLOR = new THREE.Color(0.5, 0.5, 0.5);
 
 export const LINE_COUNT = 35; // n lines
 export const LINE_WIDTH = 2; // line thickness in pixels
