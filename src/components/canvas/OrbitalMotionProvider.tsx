@@ -3,6 +3,7 @@
 import { createContext, useContext, useRef, useMemo, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useViewDependentSpeed } from "./useViewDependentSpeed";
 
 interface OrbitalPoint {
   radius: number;
@@ -29,6 +30,10 @@ export function OrbitalMotionProvider({
   const orbitalPointsRef = useRef<OrbitalPoint[]>([]);
   const isInitializedRef = useRef(false);
   const [positions, setPositions] = useState<[number, number, number][]>([]);
+  const speedMultiplier = useViewDependentSpeed({
+    baseSpeed: 1.0,
+    smoothing: 0.1,
+  });
 
   // Initialize orbital parameters for each point only once
   useMemo(() => {
@@ -55,7 +60,8 @@ export function OrbitalMotionProvider({
 
       for (let i = 0; i < points.length; i++) {
         const point = points[i];
-        point.angle += point.speed;
+        // Apply view-dependent speed multiplier
+        point.angle += point.speed * speedMultiplier;
 
         // Use faster trigonometric calculations
         const x = Math.cos(point.angle) * point.radius;
