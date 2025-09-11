@@ -39,7 +39,7 @@ export default function Lines() {
 
     // Generate connections only between neighboring layers
     let connectionCount = 0;
-    const maxConnections = Math.min(LINE_COUNT, positions.length - 1);
+    const maxConnections = LINE_COUNT;
 
     for (
       let i = 0;

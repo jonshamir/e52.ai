@@ -82,7 +82,7 @@ export default function WebGLCanvas() {
       />
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
       {/* 5 concentric circles with radii from 0.5 to 2.5 */}
-      {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0, 2.5])}
+      {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0])}
       <OrbitalMotionProvider initialPositions={positions}>
         <Lines />
         <Points />
