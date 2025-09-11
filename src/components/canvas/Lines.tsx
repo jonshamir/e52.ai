@@ -8,18 +8,21 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { LINE_COUNT, LINE_WIDTH, LINE_COLOR } from "./constants";
 import { useLinesOpacity } from "./useViewDependentOpacity";
+import { useOrbitalMotion } from "./useOrbitalMotion";
 
 extend({ Line2, LineMaterial, LineGeometry });
 
 export default function Lines({
-  positions,
+  initialPositions,
 }: {
-  positions: [number, number, number][];
+  initialPositions: [number, number, number][];
 }) {
+  const { positions } = useOrbitalMotion(initialPositions);
   const { size } = useThree();
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
   const opacity = useLinesOpacity();
 
+  // Memoize connections calculation - only recalculate when positions change significantly
   const connections = useMemo(() => {
     const lines: [number, number][] = [];
 
@@ -70,14 +73,15 @@ export default function Lines({
     }
 
     return lines;
-  }, [positions]);
+  }, [positions.length]); // Only recalculate when number of positions changes
 
   // Build sampled cubic Bezier polylines for each connection
-  const polylines = useMemo(() => {
+  // Calculate polylines dynamically with optimized performance
+  const polylines = (() => {
     const curves: Float32Array[] = [];
-    const SEGMENTS = 24; // segments per curve
+    const SEGMENTS = 16; // Reduced segments for better performance
 
-    // Helper to evaluate cubic Bezier at t
+    // Optimized cubic Bezier evaluation
     const cubic = (
       t: number,
       p0: THREE.Vector3,
@@ -99,44 +103,45 @@ export default function Lines({
       );
     };
 
-    connections.forEach(([from, to]) => {
+    for (let i = 0; i < connections.length; i++) {
+      const [from, to] = connections[i];
       const p0 = new THREE.Vector3(...positions[from]);
       const p3 = new THREE.Vector3(...positions[to]);
 
       // Control points with y matching each endpoint and x,z at midpoint
       const c1 = new THREE.Vector3(
-        THREE.MathUtils.lerp(p0.x, p3.x, 0.5), // x at midpoint
+        (p0.x + p3.x) * 0.5, // x at midpoint
         p0.y, // y matches first endpoint
-        THREE.MathUtils.lerp(p0.z, p3.z, 0.5) // z at midpoint
+        (p0.z + p3.z) * 0.5 // z at midpoint
       );
       const c2 = new THREE.Vector3(
-        THREE.MathUtils.lerp(p0.x, p3.x, 0.5), // x at midpoint
+        (p0.x + p3.x) * 0.5, // x at midpoint
         p3.y, // y matches second endpoint
-        THREE.MathUtils.lerp(p0.z, p3.z, 0.5) // z at midpoint
+        (p0.z + p3.z) * 0.5 // z at midpoint
       );
 
       const pts = new Float32Array((SEGMENTS + 1) * 3);
-      for (let i = 0; i <= SEGMENTS; i++) {
-        const t = i / SEGMENTS;
+      for (let j = 0; j <= SEGMENTS; j++) {
+        const t = j / SEGMENTS;
         const v = cubic(t, p0, c1, c2, p3);
-        pts[i * 3 + 0] = v.x;
-        pts[i * 3 + 1] = v.y;
-        pts[i * 3 + 2] = v.z;
+        const idx = j * 3;
+        pts[idx] = v.x;
+        pts[idx + 1] = v.y;
+        pts[idx + 2] = v.z;
       }
       curves.push(pts);
-    });
+    }
 
     return curves;
-  }, [connections, positions]);
+  })();
 
-  const geometries = useMemo(() => {
-    return polylines.map((pts) => {
-      const geom = new LineGeometry();
-      // LineGeometry expects a flat array of xyz positions
-      geom.setPositions(Array.from(pts));
-      return geom;
-    });
-  }, [polylines]);
+  // Calculate geometries dynamically for real-time updates
+  const geometries = polylines.map((pts) => {
+    const geom = new LineGeometry();
+    // LineGeometry expects a flat array of xyz positions
+    geom.setPositions(Array.from(pts));
+    return geom;
+  });
 
   useEffect(() => {
     materialRefs.current.forEach((mat) => {

@@ -5,8 +5,14 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { POINT_COLOR, POINT_RADIUS } from "./constants";
 import { quadVertexShader, quadFragmentShader } from "./shaders";
+import { useOrbitalMotion } from "./useOrbitalMotion";
 
-export default function Points({ positions }: { positions: [number, number, number][] }) {
+export default function Points({
+  initialPositions,
+}: {
+  initialPositions: [number, number, number][];
+}) {
+  const { positions } = useOrbitalMotion(initialPositions);
   const { size } = useThree();
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
@@ -46,22 +52,38 @@ export default function Points({ positions }: { positions: [number, number, numb
   // Update resolution uniform when size changes
   useEffect(() => {
     if (materialRef.current) {
-      materialRef.current.uniforms.u_resolution.value.set(size.width, size.height);
+      materialRef.current.uniforms.u_resolution.value.set(
+        size.width,
+        size.height
+      );
     }
   }, [size.width, size.height]);
 
   useFrame(({ clock, pointer }) => {
     if (materialRef.current) {
       materialRef.current.uniforms.u_time.value = clock.getElapsedTime();
-      materialRef.current.uniforms.u_cursorPosition.value.set(pointer.x, pointer.y);
+      materialRef.current.uniforms.u_cursorPosition.value.set(
+        pointer.x,
+        pointer.y
+      );
     }
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, positions.length]} renderOrder={1}>
+    <instancedMesh
+      ref={meshRef}
+      args={[undefined as any, undefined as any, positions.length]}
+      renderOrder={1}
+    >
       <planeGeometry args={[2, 2, 1, 1]}>
-        <instancedBufferAttribute attach="attributes-instanceOffset" args={[instanceOffsetAttr.array, 3]} />
-        <instancedBufferAttribute attach="attributes-instanceColor" args={[instanceColorAttr.array, 3]} />
+        <instancedBufferAttribute
+          attach="attributes-instanceOffset"
+          args={[instanceOffsetAttr.array, 3]}
+        />
+        <instancedBufferAttribute
+          attach="attributes-instanceColor"
+          args={[instanceColorAttr.array, 3]}
+        />
       </planeGeometry>
       <shaderMaterial
         ref={materialRef}
@@ -70,15 +92,15 @@ export default function Points({ positions }: { positions: [number, number, numb
         transparent
         depthWrite={false}
         depthTest={false}
-        uniforms={{
-          u_resolution: { value: new THREE.Vector2(size.width, size.height) },
-          u_time: { value: 0 },
-          u_cursorPosition: { value: new THREE.Vector2(0, 0) },
-          u_quadRadius: { value: POINT_RADIUS },
-        } as Record<string, any>}
+        uniforms={
+          {
+            u_resolution: { value: new THREE.Vector2(size.width, size.height) },
+            u_time: { value: 0 },
+            u_cursorPosition: { value: new THREE.Vector2(0, 0) },
+            u_quadRadius: { value: POINT_RADIUS },
+          } as Record<string, any>
+        }
       />
     </instancedMesh>
   );
 }
-
-
