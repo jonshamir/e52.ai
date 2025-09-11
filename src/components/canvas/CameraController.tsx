@@ -20,28 +20,35 @@ export default function CameraController() {
       const animate = () => {
         const elapsed = Date.now() - startTimeRef.current;
         const animationDuration = 500; // 0.5 seconds for animation
-        const waitDuration = 3000; // 3 seconds wait
+        const frontWaitDuration = 3000; // 3 seconds wait at front
+        const sideWaitDuration = 1000; // 1 second wait at side
         const totalDuration =
-          waitDuration + animationDuration + waitDuration + animationDuration; // 3s + 0.5s + 3s + 0.5s = 7s total
+          frontWaitDuration +
+          animationDuration +
+          sideWaitDuration +
+          animationDuration; // 3s + 0.5s + 1s + 0.5s = 5s total
 
         let progress = 0;
         let targetAngle;
 
-        if (elapsed < waitDuration) {
+        if (elapsed < frontWaitDuration) {
           // First 3 seconds: hold at 0°
           targetAngle = 0; // Stay at 0 degrees (front view)
-        } else if (elapsed < waitDuration + animationDuration) {
+        } else if (elapsed < frontWaitDuration + animationDuration) {
           // Next 0.5 seconds: rotate from 0° to 90°
-          const animElapsed = elapsed - waitDuration;
+          const animElapsed = elapsed - frontWaitDuration;
           progress = animElapsed / animationDuration;
           targetAngle = (progress * Math.PI) / 2; // 0 to 90 degrees
-        } else if (elapsed < waitDuration + animationDuration + waitDuration) {
-          // Next 3 seconds: hold at 90°
+        } else if (
+          elapsed <
+          frontWaitDuration + animationDuration + sideWaitDuration
+        ) {
+          // Next 1 second: hold at 90°
           targetAngle = Math.PI / 2; // Stay at 90 degrees (side view)
         } else {
           // Last 0.5 seconds: rotate from 90° back to 0°
           const backElapsed =
-            elapsed - waitDuration - animationDuration - waitDuration;
+            elapsed - frontWaitDuration - animationDuration - sideWaitDuration;
           progress = backElapsed / animationDuration;
           targetAngle = Math.PI / 2 - (progress * Math.PI) / 2; // 90 to 0 degrees
         }
@@ -50,11 +57,11 @@ export default function CameraController() {
         const radius = 5; // Same as initial camera distance
         let x, z;
 
-        if (elapsed < waitDuration) {
+        if (elapsed < frontWaitDuration) {
           // Hold position during first wait (front view)
           x = Math.sin(targetAngle) * radius;
           z = Math.cos(targetAngle) * radius;
-        } else if (elapsed < waitDuration + animationDuration) {
+        } else if (elapsed < frontWaitDuration + animationDuration) {
           // Apply smooth easing during first animation
           const easeInOutCubic = (t: number) =>
             t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -62,7 +69,10 @@ export default function CameraController() {
           const easedAngle = (easedProgress * Math.PI) / 2;
           x = Math.sin(easedAngle) * radius;
           z = Math.cos(easedAngle) * radius;
-        } else if (elapsed < waitDuration + animationDuration + waitDuration) {
+        } else if (
+          elapsed <
+          frontWaitDuration + animationDuration + sideWaitDuration
+        ) {
           // Hold position during second wait (side view)
           x = Math.sin(targetAngle) * radius;
           z = Math.cos(targetAngle) * radius;
