@@ -101,16 +101,16 @@ export default function Lines({
       const p0 = new THREE.Vector3(...positions[from]);
       const p3 = new THREE.Vector3(...positions[to]);
 
-      // Control points on xy plane (z=0) with y matching adjacent endpoint
+      // Control points with y matching each endpoint and x,z at midpoint
       const c1 = new THREE.Vector3(
-        THREE.MathUtils.lerp(p0.x, p3.x, 1 / 3),
-        p0.y,
-        0
+        THREE.MathUtils.lerp(p0.x, p3.x, 0.5), // x at midpoint
+        p0.y, // y matches first endpoint
+        THREE.MathUtils.lerp(p0.z, p3.z, 0.5) // z at midpoint
       );
       const c2 = new THREE.Vector3(
-        THREE.MathUtils.lerp(p0.x, p3.x, 2 / 3),
-        p3.y,
-        0
+        THREE.MathUtils.lerp(p0.x, p3.x, 0.5), // x at midpoint
+        p3.y, // y matches second endpoint
+        THREE.MathUtils.lerp(p0.z, p3.z, 0.5) // z at midpoint
       );
 
       const pts = new Float32Array((SEGMENTS + 1) * 3);
