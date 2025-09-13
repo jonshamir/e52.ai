@@ -16,7 +16,7 @@ export default function WebGLCanvas() {
   const generateCirclePositions = (
     count: number
   ): [number, number, number][] => {
-    const circles = [0.5, 1.0, 1.5, 2.0, 2.5]; // Concentric circle radii
+    const circles = [0.5, 1.0, 1.5, 2.0]; // Concentric circle radii
     const positions: [number, number, number][] = [];
 
     for (let i = 0; i < count; i++) {

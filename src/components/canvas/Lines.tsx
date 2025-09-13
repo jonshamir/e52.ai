@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useEffect } from "react";
-import { useThree, extend } from "@react-three/fiber";
+import { useMemo, useRef, useEffect, useState, useCallback } from "react";
+import { useThree, extend, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
@@ -17,6 +17,10 @@ export default function Lines() {
   const { size } = useThree();
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
   const opacity = useLinesOpacity();
+
+  // State for line visibility
+  const [lineVisibility, setLineVisibility] = useState<boolean[]>([]);
+  const animationTimeRef = useRef(0);
 
   // Memoize connections calculation - only recalculate when positions change significantly
   const connections = useMemo(() => {
@@ -70,6 +74,32 @@ export default function Lines() {
 
     return lines;
   }, [positions.length]); // Only recalculate when number of positions changes
+
+  // Initialize visibility state when connections change
+  useEffect(() => {
+    const initialVisibility = new Array(connections.length).fill(false);
+    setLineVisibility(initialVisibility);
+  }, [connections.length]);
+
+  // Animation loop for random line visibility
+  useFrame((state, delta) => {
+    animationTimeRef.current += delta;
+
+    // Update visibility every 0.1 seconds for smooth but frequent changes
+    if (animationTimeRef.current >= 0.1) {
+      animationTimeRef.current = 0;
+
+      setLineVisibility((prev) => {
+        return prev.map((visible, index) => {
+          // Each line has its own random timing based on its index
+          const lineSeed =
+            Math.sin(state.clock.elapsedTime + index * 10.1) * 0.5 + 0.5;
+          const shouldBeVisible = lineSeed > 0.3; // Adjust threshold for more/fewer visible lines
+          return shouldBeVisible;
+        });
+      });
+    }
+  });
 
   // Build sampled cubic Bezier polylines for each connection
   // Calculate polylines dynamically with optimized performance
@@ -163,23 +193,28 @@ export default function Lines() {
 
   return (
     <group>
-      {geometries.map((geometry, idx) => (
-        // @ts-expect-error three-stdlib element
-        <line2 key={idx} geometry={geometry}>
-          {/* @ts-expect-error three-stdlib element */}
-          <lineMaterial
-            ref={(ref: LineMaterial | null) =>
-              (materialRefs.current[idx] = ref)
-            }
-            color={lineColor}
-            linewidth={LINE_WIDTH}
-            resolution={[size.width, size.height]}
-            transparent={true}
-            opacity={opacity}
-          />
-          {/* @ts-expect-error three-stdlib element */}
-        </line2>
-      ))}
+      {geometries.map((geometry, idx) => {
+        // Only render visible lines
+        if (!lineVisibility[idx]) return null;
+
+        return (
+          // @ts-expect-error three-stdlib element
+          <line2 key={idx} geometry={geometry}>
+            {/* @ts-expect-error three-stdlib element */}
+            <lineMaterial
+              ref={(ref: LineMaterial | null) =>
+                (materialRefs.current[idx] = ref)
+              }
+              color={lineColor}
+              linewidth={LINE_WIDTH}
+              resolution={[size.width, size.height]}
+              transparent={true}
+              opacity={opacity}
+            />
+            {/* @ts-expect-error three-stdlib element */}
+          </line2>
+        );
+      })}
     </group>
   );
 }

@@ -19,14 +19,14 @@ export default function CameraController() {
 
       const animate = () => {
         const elapsed = Date.now() - startTimeRef.current;
-        const animationDuration = 1000; // 0.5 seconds for animation
-        const frontWaitDuration = 3000; // 3 seconds wait at front
-        const sideWaitDuration = 1000; // 1 second wait at side
+        const animationDuration = 1000; // animation
+        const frontWaitDuration = 3000; // wait at front
+        const sideWaitDuration = 3000; // wait at side
         const totalDuration =
           frontWaitDuration +
           animationDuration +
           sideWaitDuration +
-          animationDuration; // 3s + 0.5s + 1s + 0.5s = 5s total
+          animationDuration;
 
         let progress = 0;
         let targetAngle;

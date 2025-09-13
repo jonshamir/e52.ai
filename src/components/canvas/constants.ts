@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export const QUAD_COUNT = 30; // n points
+export const QUAD_COUNT = 20; // n points
 export const POINT_RADIUS = 6; // radius in pixels
 export const POINT_COLOR = new THREE.Color(0.5, 0.5, 0.5);
 
