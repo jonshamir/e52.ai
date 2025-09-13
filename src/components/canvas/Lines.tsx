@@ -18,8 +18,8 @@ export default function Lines() {
   const materialRefs = useRef<Array<LineMaterial | null>>([]);
   const opacity = useLinesOpacity();
 
-  // State for line visibility
-  const [lineVisibility, setLineVisibility] = useState<boolean[]>([]);
+  // State for line animation progress (0 to 1)
+  const [lineProgress, setLineProgress] = useState<number[]>([]);
   const animationTimeRef = useRef(0);
 
   // Memoize connections calculation - only recalculate when positions change significantly
@@ -75,33 +75,42 @@ export default function Lines() {
     return lines;
   }, [positions.length]); // Only recalculate when number of positions changes
 
-  // Initialize visibility state when connections change
+  // Initialize progress state when connections change
   useEffect(() => {
-    const initialVisibility = new Array(connections.length).fill(false);
-    setLineVisibility(initialVisibility);
+    const initialProgress = new Array(connections.length).fill(0);
+    setLineProgress(initialProgress);
   }, [connections.length]);
 
-  // Animation loop for random line visibility
+  // Animation loop for gradual line drawing
   useFrame((state, delta) => {
     animationTimeRef.current += delta;
 
-    // Update visibility every 0.1 seconds for smooth but frequent changes
-    if (animationTimeRef.current >= 0.1) {
-      animationTimeRef.current = 0;
+    // Update progress every frame for smooth animation
+    setLineProgress((prev) => {
+      return prev.map((progress, index) => {
+        // Each line has its own timing offset based on its index
+        const timeOffset = index * 0.3;
+        const cycleTime = (state.clock.elapsedTime + timeOffset) % 8; // 8 second cycle
 
-      setLineVisibility((prev) => {
-        return prev.map((visible, index) => {
-          // Each line has its own random timing based on its index
-          const lineSeed =
-            Math.sin(state.clock.elapsedTime + index * 10.1) * 0.5 + 0.5;
-          const shouldBeVisible = lineSeed > 0.3; // Adjust threshold for more/fewer visible lines
-          return shouldBeVisible;
-        });
+        // Create smooth in/out animation with longer hold time
+        if (cycleTime < 0.5) {
+          // Drawing in phase (0 to 0.5 seconds) - faster draw
+          return cycleTime * 2; // Double speed for quick draw
+        } else if (cycleTime < 6.5) {
+          // Full line phase (0.5 to 6.5 seconds) - much longer hold
+          return 1;
+        } else if (cycleTime < 7) {
+          // Drawing out phase (6.5 to 7 seconds) - faster fade
+          return 1 - (cycleTime - 6.5) * 2; // Double speed for quick fade
+        } else {
+          // Hidden phase (7 to 8 seconds) - brief pause
+          return 0;
+        }
       });
-    }
+    });
   });
 
-  // Build sampled cubic Bezier polylines for each connection
+  // Build sampled cubic Bezier polylines for each connection with animation progress
   // Calculate polylines dynamically with optimized performance
   const polylines = (() => {
     const curves: Float32Array[] = [];
@@ -131,6 +140,14 @@ export default function Lines() {
 
     for (let i = 0; i < connections.length; i++) {
       const [from, to] = connections[i];
+      const progress = lineProgress[i] || 0;
+
+      // Skip lines with zero progress (hidden)
+      if (progress <= 0) {
+        curves.push(new Float32Array(0));
+        continue;
+      }
+
       const p0 = new THREE.Vector3(...positions[from]);
       const p3 = new THREE.Vector3(...positions[to]);
 
@@ -146,8 +163,11 @@ export default function Lines() {
         (p0.z + p3.z) * 0.5 // z at midpoint
       );
 
-      const pts = new Float32Array((SEGMENTS + 1) * 3);
-      for (let j = 0; j <= SEGMENTS; j++) {
+      // Calculate how many segments to show based on progress
+      const visibleSegments = Math.ceil(SEGMENTS * progress);
+      const pts = new Float32Array((visibleSegments + 1) * 3);
+
+      for (let j = 0; j <= visibleSegments; j++) {
         const t = j / SEGMENTS;
         const v = cubic(t, p0, c1, c2, p3);
         const idx = j * 3;
@@ -163,6 +183,8 @@ export default function Lines() {
 
   // Calculate geometries dynamically for real-time updates
   const geometries = polylines.map((pts) => {
+    if (pts.length === 0) return null; // Skip empty geometries
+
     const geom = new LineGeometry();
     // LineGeometry expects a flat array of xyz positions
     geom.setPositions(Array.from(pts));
@@ -194,8 +216,8 @@ export default function Lines() {
   return (
     <group>
       {geometries.map((geometry, idx) => {
-        // Only render visible lines
-        if (!lineVisibility[idx]) return null;
+        // Only render lines with valid geometry
+        if (!geometry) return null;
 
         return (
           // @ts-expect-error three-stdlib element
