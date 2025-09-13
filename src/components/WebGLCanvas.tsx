@@ -6,6 +6,7 @@ import { QUAD_COUNT } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";
+import Ruler from "./canvas/Ruler";
 import { LINE_WIDTH } from "./canvas/constants";
 import CircleLine from "./canvas/CircleLine";
 import { OrbitalMotionProvider } from "./canvas/OrbitalMotionProvider";
@@ -83,6 +84,15 @@ export default function WebGLCanvas() {
         tickWidth={LINE_WIDTH}
       />
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
+      {/* Linear rulers */}
+      <Ruler
+        start={[0, 0, -3]}
+        end={[0, 0, 2]}
+        tickCount={6}
+        tickLength={2}
+        tickWidth={LINE_WIDTH}
+        direction="horizontal"
+      />
       {/* 5 concentric circles with radii from 0.5 to 2.5 */}
       {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0])}
       <OrbitalMotionProvider initialPositions={positions}>

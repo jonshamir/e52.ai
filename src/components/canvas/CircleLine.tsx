@@ -98,6 +98,7 @@ export default function CircleLine({
         resolution={[size.width, size.height]}
         transparent={true}
         opacity={opacity}
+        depthWrite={false}
       />
       {/* @ts-expect-error three-stdlib element */}
     </line2>

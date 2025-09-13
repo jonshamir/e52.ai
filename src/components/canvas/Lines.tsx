@@ -245,6 +245,7 @@ export default function Lines() {
               resolution={[size.width, size.height]}
               transparent={true}
               opacity={opacity}
+              depthWrite={false}
             />
             {/* @ts-expect-error three-stdlib element */}
           </line2>
