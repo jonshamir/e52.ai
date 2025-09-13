@@ -44,14 +44,7 @@ export function useViewDependentOpacity(
       // Calculate target opacity based on inverse setting
       const targetOpacity = inverse ? 1.0 - zComponent : zComponent;
 
-      // Apply smoothing to prevent jarring transitions
-      const smoothedOpacity = THREE.MathUtils.lerp(
-        opacity,
-        targetOpacity,
-        smoothing
-      );
-
-      setOpacity(smoothedOpacity);
+      setOpacity(targetOpacity);
     }
   });
 

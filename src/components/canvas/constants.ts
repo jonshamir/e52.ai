@@ -6,4 +6,4 @@ export const POINT_COLOR = new THREE.Color(0.5, 0.5, 0.5);
 
 export const LINE_COUNT = 35; // n lines
 export const LINE_WIDTH = 2; // line thickness in pixels
-export const LINE_COLOR = new THREE.Color(0.8, 0.8, 0.8);
+export const LINE_COLOR = new THREE.Color(0.859, 0.859, 0.851);
