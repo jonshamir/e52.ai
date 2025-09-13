@@ -1,266 +1,94 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
-async function loadShader(url: string): Promise<string> {
-  const response = await fetch(url);
-  return response.text();
-}
-
-function createShader(
-  gl: WebGLRenderingContext,
-  type: number,
-  source: string
-): WebGLShader | null {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error("Error compiling shader:", gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-
-  return shader;
-}
-
-function createProgram(
-  gl: WebGLRenderingContext,
-  vertexShader: WebGLShader,
-  fragmentShader: WebGLShader
-): WebGLProgram | null {
-  const program = gl.createProgram();
-  if (!program) return null;
-
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("Error linking program:", gl.getProgramInfoLog(program));
-    gl.deleteProgram(program);
-    return null;
-  }
-
-  return program;
-}
-
-const DOT_COUNT = 300;
+import { Canvas } from "@react-three/fiber";
+import { Circle, OrbitControls } from "@react-three/drei";
+import { QUAD_COUNT, LINE_COLOR } from "./canvas/constants";
+import Points from "./canvas/Points";
+import Lines from "./canvas/Lines";
+import TickMarks from "./canvas/TickMarks";
+import { LINE_WIDTH } from "./canvas/constants";
+import CircleLine from "./canvas/CircleLine";
+import { OrbitalMotionProvider } from "./canvas/OrbitalMotionProvider";
+import CameraController from "./canvas/CameraController";
 
 export default function WebGLCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mousePosRef = useRef({ x: 0, y: 0 });
+  // Generate random positions on concentric circles
+  const generateCirclePositions = (
+    count: number
+  ): [number, number, number][] => {
+    const circles = [0.5, 1.0, 1.5, 2.0]; // Concentric circle radii
+    const positions: [number, number, number][] = [];
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const gl = canvas.getContext("webgl", {
-      alpha: true,
-      premultipliedAlpha: false,
-    });
-    if (!gl) {
-      console.error("WebGL not supported");
-      return;
+    for (let i = 0; i < count; i++) {
+      // Randomly select a circle
+      const radius = circles[Math.floor(Math.random() * circles.length)];
+      // Random angle around the circle
+      const angle = Math.random() * Math.PI * 2;
+      // Calculate x, y position on the circle
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      let z = Math.random() * 4 - 2; // Random z coordinate
+      z = (1.5 * Math.floor(z * 1.5)) / 1.5;
+      positions.push([x, y, z]);
     }
 
-    // Enable the standard derivatives extension for fwidth()
-    const ext = gl.getExtension("OES_standard_derivatives");
-    if (!ext) {
-      console.warn("OES_standard_derivatives extension not supported");
-    }
+    return positions;
+  };
 
-    // Enable instanced arrays extension
-    const instancedArraysExt = gl.getExtension("ANGLE_instanced_arrays");
-    if (!instancedArraysExt) {
-      console.error("ANGLE_instanced_arrays extension not supported");
-      return;
-    }
+  const positions: [number, number, number][] =
+    generateCirclePositions(QUAD_COUNT);
 
-    async function initWebGL() {
-      if (!gl || !canvas) return;
+  const renderConcentricCircles = (
+    center: [number, number, number],
+    radii: number[]
+  ) => {
+    return radii.map((radius, index) => (
+      <CircleLine
+        key={index}
+        center={center}
+        radius={radius}
+        lineWidth={LINE_WIDTH}
+      />
+    ));
+  };
 
-      const vertexShaderSource = await loadShader("/shaders/vertex.glsl");
-      const fragmentShaderSource = await loadShader("/shaders/fragment.glsl");
-
-      const vertexShader = createShader(
-        gl,
-        gl.VERTEX_SHADER,
-        vertexShaderSource
-      );
-      const fragmentShader = createShader(
-        gl,
-        gl.FRAGMENT_SHADER,
-        fragmentShaderSource
-      );
-
-      if (!vertexShader || !fragmentShader) return;
-
-      const program = createProgram(gl, vertexShader, fragmentShader);
-      if (!program) return;
-
-      const positionAttributeLocation = gl.getAttribLocation(
-        program,
-        "a_position"
-      );
-      const dotIndexAttributeLocation = gl.getAttribLocation(
-        program,
-        "a_dotIndex"
-      );
-
-      const resolutionUniformLocation = gl.getUniformLocation(
-        program,
-        "u_resolution"
-      );
-      const timeUniformLocation = gl.getUniformLocation(program, "u_time");
-      const spiralCenterUniformLocation = gl.getUniformLocation(
-        program,
-        "u_spiralCenter"
-      );
-      const cursorPositionUniformLocation = gl.getUniformLocation(
-        program,
-        "u_cursorPosition"
-      );
-
-      // Create quad vertices (2 triangles)
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      const positions = [
-        -1.0,
-        -1.0, // Triangle 1
-        1.0,
-        -1.0,
-        -1.0,
-        1.0,
-        -1.0,
-        1.0, // Triangle 2
-        1.0,
-        -1.0,
-        1.0,
-        1.0,
-      ];
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW
-      );
-
-      // Create instance data (dot indices 0-199)
-      const instanceBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-      const dotIndices = Array.from({ length: DOT_COUNT }, (_, i) => i);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array(dotIndices),
-        gl.STATIC_DRAW
-      );
-
-      function resize() {
-        if (!canvas || !gl) return;
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
-        gl.viewport(0, 0, canvas.width, canvas.height);
-      }
-
-      function render(time: number = 0) {
-        if (!gl || !canvas) return;
-
-        // Enable blending for transparency
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-        // Clear with transparent background
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.useProgram(program);
-
-        gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
-        gl.uniform1f(timeUniformLocation, time * 0.001);
-        gl.uniform2f(spiralCenterUniformLocation, 0.0, 0.0); // Default: original offset
-        
-        // Convert mouse position to normalized coordinates (-1 to 1)
-        const normalizedX = (mousePosRef.current.x / canvas.width) * 2 - 1;
-        const normalizedY = -((mousePosRef.current.y / canvas.height) * 2 - 1); // Flip Y
-        gl.uniform2f(cursorPositionUniformLocation, normalizedX, normalizedY);
-
-        // Set up position attribute (per vertex)
-        gl.enableVertexAttribArray(positionAttributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.vertexAttribPointer(
-          positionAttributeLocation,
-          2,
-          gl.FLOAT,
-          false,
-          0,
-          0
-        );
-
-        // Set up dot index attribute (per instance)
-        gl.enableVertexAttribArray(dotIndexAttributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
-        gl.vertexAttribPointer(
-          dotIndexAttributeLocation,
-          1,
-          gl.FLOAT,
-          false,
-          0,
-          0
-        );
-        instancedArraysExt!.vertexAttribDivisorANGLE(
-          dotIndexAttributeLocation,
-          1
-        );
-
-        // Draw instances of 6 vertices each (2 triangles per dot)
-        instancedArraysExt!.drawArraysInstancedANGLE(
-          gl.TRIANGLES,
-          0,
-          6,
-          DOT_COUNT
-        );
-      }
-
-      resize();
-
-      let animationId: number;
-
-      function animate(time: number) {
-        render(time);
-        animationId = requestAnimationFrame(animate);
-      }
-
-      animationId = requestAnimationFrame(animate);
-
-      const handleResize = () => {
-        resize();
-      };
-
-      const handleMouseMove = (event: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        mousePosRef.current.x = (event.clientX - rect.left) * dpr;
-        mousePosRef.current.y = (event.clientY - rect.top) * dpr;
-      };
-
-      window.addEventListener("resize", handleResize);
-      document.addEventListener("mousemove", handleMouseMove);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        document.removeEventListener("mousemove", handleMouseMove);
-        cancelAnimationFrame(animationId);
-      };
-    }
-
-    initWebGL();
-  }, []);
-
-  return <canvas ref={canvasRef} className="effect-canvas" />;
+  return (
+    <Canvas
+      orthographic
+      camera={{ position: [0, 0, 5], zoom: 100 }}
+      dpr={[1, 2]}
+      gl={{ alpha: true, premultipliedAlpha: true, outputColorSpace: "srgb" }}
+      className="effect-canvas"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100vh",
+        pointerEvents: "all",
+      }}
+    >
+      <OrbitControls
+        enableDamping
+        dampingFactor={0.05}
+        enableZoom={true}
+        enablePan={true}
+        enableRotate={false}
+        makeDefault
+      />
+      <CameraController />
+      <TickMarks
+        radius={2.3}
+        tickCount={60}
+        tickLength={0.15}
+        tickWidth={LINE_WIDTH}
+      />
+      <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
+      {/* 5 concentric circles with radii from 0.5 to 2.5 */}
+      {renderConcentricCircles([0, 0, 0], [0.5, 1.0, 1.5, 2.0])}
+      <OrbitalMotionProvider initialPositions={positions}>
+        <Lines />
+        <Points />
+      </OrbitalMotionProvider>
+    </Canvas>
+  );
 }

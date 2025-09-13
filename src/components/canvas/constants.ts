@@ -1,0 +1,9 @@
+import * as THREE from "three";
+
+export const QUAD_COUNT = 20; // n points
+export const POINT_RADIUS = 6; // radius in pixels
+export const POINT_COLOR = new THREE.Color(0.5, 0.5, 0.5);
+
+export const LINE_COUNT = 35; // n lines
+export const LINE_WIDTH = 2; // line thickness in pixels
+export const LINE_COLOR = new THREE.Color(0.859, 0.859, 0.851);

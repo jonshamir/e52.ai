@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Logo from "@/components/Logo";
+import WebGLCanvas from "../components/WebGLCanvas";
 
 export default function Home() {
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function Home() {
 
   return (
     <>
-      {/* <WebGLCanvas /> */}
+      <WebGLCanvas />
       <main>
         <div className="intro">
           <Logo />
@@ -27,11 +28,6 @@ export default function Home() {
             fragmented data, powering scalable infrastructure, and enabling
             real-time intelligence.
           </p>
-          {/* <ul>
-            <li>Unifying fragmented data</li>
-            <li>Powering scalable infrastructure</li>
-            <li>Enabling real-time intelligence</li>
-          </ul> */}
           <p>
             Together with our partners, we build systems that adapt, endure, and
             create lasting competitive advantage.
