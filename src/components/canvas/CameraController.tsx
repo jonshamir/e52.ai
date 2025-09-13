@@ -19,7 +19,7 @@ export default function CameraController() {
 
       const animate = () => {
         const elapsed = Date.now() - startTimeRef.current;
-        const animationDuration = 500; // 0.5 seconds for animation
+        const animationDuration = 1000; // 0.5 seconds for animation
         const frontWaitDuration = 3000; // 3 seconds wait at front
         const sideWaitDuration = 1000; // 1 second wait at side
         const totalDuration =
@@ -86,8 +86,17 @@ export default function CameraController() {
           z = Math.cos(easedAngle) * radius;
         }
 
-        // Smoothly interpolate camera position
-        camera.position.lerp(new THREE.Vector3(x, 0, z), 0.1);
+        // Set camera position directly during animations, use lerp during waits
+        if (
+          elapsed < frontWaitDuration ||
+          elapsed >= frontWaitDuration + animationDuration + sideWaitDuration
+        ) {
+          // During wait periods, use smooth interpolation
+          camera.position.lerp(new THREE.Vector3(x, 0, z), 0.1);
+        } else {
+          // During animations, set position directly for smooth motion
+          camera.position.set(x, 0, z);
+        }
         camera.lookAt(0, 0, 0);
 
         // Continue animation if not complete
