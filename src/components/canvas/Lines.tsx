@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useEffect, useState, useCallback } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { useThree, extend, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
@@ -73,7 +73,7 @@ export default function Lines() {
     }
 
     return lines;
-  }, [positions.length]); // Only recalculate when number of positions changes
+  }, [positions]); // Recalculate when positions change
 
   // Initialize progress state when connections change
   useEffect(() => {

@@ -68,7 +68,7 @@ export default function Points() {
   return (
     <instancedMesh
       ref={meshRef}
-      args={[undefined as any, undefined as any, positions.length]}
+      args={[undefined, undefined, positions.length]}
       renderOrder={1}
     >
       <planeGeometry args={[2, 2, 1, 1]}>
@@ -94,7 +94,7 @@ export default function Points() {
             u_time: { value: 0 },
             u_cursorPosition: { value: new THREE.Vector2(0, 0) },
             u_quadRadius: { value: POINT_RADIUS },
-          } as Record<string, any>
+          } as Record<string, { value: unknown }>
         }
       />
     </instancedMesh>

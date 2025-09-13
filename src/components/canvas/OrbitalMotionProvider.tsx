@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useRef, useMemo, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
 import { useViewDependentSpeed } from "./useViewDependentSpeed";
 
 interface OrbitalPoint {
@@ -55,7 +54,7 @@ export function OrbitalMotionProvider({
   useFrame(() => {
     const points = orbitalPointsRef.current;
 
-    setPositions((prevPositions) => {
+    setPositions(() => {
       const newPositions: [number, number, number][] = [];
 
       for (let i = 0; i < points.length; i++) {

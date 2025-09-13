@@ -1,8 +1,8 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Circle, OrbitControls } from "@react-three/drei";
-import { QUAD_COUNT, LINE_COLOR } from "./canvas/constants";
+import { OrbitControls } from "@react-three/drei";
+import { QUAD_COUNT } from "./canvas/constants";
 import Points from "./canvas/Points";
 import Lines from "./canvas/Lines";
 import TickMarks from "./canvas/TickMarks";

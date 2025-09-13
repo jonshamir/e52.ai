@@ -38,7 +38,7 @@ export default function TickMarks({
     const color =
       tickColor instanceof THREE.Color
         ? tickColor.clone()
-        : new THREE.Color(tickColor as any);
+        : new THREE.Color(tickColor as string | number);
     return color.convertSRGBToLinear();
   }, [tickColor]);
 

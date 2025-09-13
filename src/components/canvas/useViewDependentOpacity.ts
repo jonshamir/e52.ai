@@ -25,7 +25,7 @@ export function useViewDependentOpacity(
 ) {
   const { camera } = useThree();
   const [opacity, setOpacity] = useState(1.0);
-  const { inverse = false, smoothing = 0.1 } = options;
+  const { inverse = false } = options;
 
   useFrame(() => {
     if (camera) {

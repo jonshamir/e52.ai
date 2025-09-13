@@ -34,7 +34,7 @@ export default function CircleLine({
     const c =
       color instanceof THREE.Color
         ? color.clone()
-        : new THREE.Color(color as any);
+        : new THREE.Color(color as string | number);
     return c.convertSRGBToLinear();
   }, [color]);
 
