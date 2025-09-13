@@ -78,6 +78,15 @@ export default function CircleLine({
     }
   }, [opacity]);
 
+  // Cleanup geometry when component unmounts
+  useEffect(() => {
+    return () => {
+      if (geometry) {
+        geometry.dispose();
+      }
+    };
+  }, [geometry]);
+
   return (
     // @ts-expect-error three-stdlib element
     <line2 geometry={geometry}>

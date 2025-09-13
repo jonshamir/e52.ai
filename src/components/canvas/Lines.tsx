@@ -112,7 +112,7 @@ export default function Lines() {
 
   // Build sampled cubic Bezier polylines for each connection with animation progress
   // Calculate polylines dynamically with optimized performance
-  const polylines = (() => {
+  const polylines = useMemo(() => {
     const curves: Float32Array[] = [];
     const SEGMENTS = 16; // Reduced segments for better performance
 
@@ -179,17 +179,19 @@ export default function Lines() {
     }
 
     return curves;
-  })();
+  }, [connections, positions, lineProgress]);
 
   // Calculate geometries dynamically for real-time updates
-  const geometries = polylines.map((pts) => {
-    if (pts.length === 0) return null; // Skip empty geometries
+  const geometries = useMemo(() => {
+    return polylines.map((pts) => {
+      if (pts.length === 0) return null; // Skip empty geometries
 
-    const geom = new LineGeometry();
-    // LineGeometry expects a flat array of xyz positions
-    geom.setPositions(Array.from(pts));
-    return geom;
-  });
+      const geom = new LineGeometry();
+      // LineGeometry expects a flat array of xyz positions
+      geom.setPositions(Array.from(pts));
+      return geom;
+    });
+  }, [polylines]);
 
   useEffect(() => {
     materialRefs.current.forEach((mat) => {
@@ -212,6 +214,17 @@ export default function Lines() {
       }
     });
   }, [opacity]);
+
+  // Cleanup geometries when component unmounts
+  useEffect(() => {
+    return () => {
+      geometries.forEach((geom) => {
+        if (geom) {
+          geom.dispose();
+        }
+      });
+    };
+  }, [geometries]);
 
   return (
     <group>

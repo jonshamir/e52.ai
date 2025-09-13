@@ -97,6 +97,15 @@ export default function TickMarks({
     }
   }, [opacity]);
 
+  // Cleanup geometry when component unmounts
+  useEffect(() => {
+    return () => {
+      if (geometry) {
+        geometry.dispose();
+      }
+    };
+  }, [geometry]);
+
   return (
     // @ts-expect-error three-stdlib element
     <lineSegments2 geometry={geometry}>
