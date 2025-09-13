@@ -22,7 +22,7 @@ export default function Lines() {
   const [lineProgress, setLineProgress] = useState<number[]>([]);
   const animationTimeRef = useRef(0);
 
-  // Memoize connections calculation - only recalculate when positions change significantly
+  // Memoize connections calculation - only recalculate when positions structure changes
   const connections = useMemo(() => {
     const lines: [number, number][] = [];
 
@@ -73,7 +73,7 @@ export default function Lines() {
     }
 
     return lines;
-  }, [positions]); // Recalculate when positions change
+  }, [positions.length]); // Only recalculate when number of positions changes
 
   // Initialize progress state when connections change
   useEffect(() => {
