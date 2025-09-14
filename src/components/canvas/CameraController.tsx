@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { easeInOutCubic } from "../../utils/easing";
 
 export default function CameraController() {
   const { camera } = useThree();
@@ -63,8 +64,6 @@ export default function CameraController() {
           z = Math.cos(targetAngle) * radius;
         } else if (elapsed < frontWaitDuration + animationDuration) {
           // Apply smooth easing during first animation
-          const easeInOutCubic = (t: number) =>
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
           const easedProgress = easeInOutCubic(progress);
           const easedAngle = (easedProgress * Math.PI) / 2;
           x = Math.sin(easedAngle) * radius;
@@ -78,25 +77,13 @@ export default function CameraController() {
           z = Math.cos(targetAngle) * radius;
         } else {
           // Apply smooth easing during second animation
-          const easeInOutCubic = (t: number) =>
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
           const easedProgress = easeInOutCubic(progress);
           const easedAngle = Math.PI / 2 - (easedProgress * Math.PI) / 2;
           x = Math.sin(easedAngle) * radius;
           z = Math.cos(easedAngle) * radius;
         }
 
-        // Set camera position directly during animations, use lerp during waits
-        if (
-          elapsed < frontWaitDuration ||
-          elapsed >= frontWaitDuration + animationDuration + sideWaitDuration
-        ) {
-          // During wait periods, use smooth interpolation
-          camera.position.lerp(new THREE.Vector3(x, 0, z), 0.1);
-        } else {
-          // During animations, set position directly for smooth motion
-          camera.position.set(x, 0, z);
-        }
+        camera.position.set(x, 0, z);
         camera.lookAt(0, 0, 0);
 
         // Continue animation if not complete
