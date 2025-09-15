@@ -107,7 +107,7 @@ main {
   transform: translate(15%, -5%);
 
   @media (max-width: 70rem) {
-    transform: translateX(15%) translateY(10%);
+    transform: translateX(15%) translateY(-20%);
   }
 }
 
