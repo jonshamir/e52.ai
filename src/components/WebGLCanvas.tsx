@@ -77,12 +77,12 @@ export default function WebGLCanvas() {
         makeDefault
       />
       <CameraController />
-      <TickMarks
+      {/* <TickMarks
         radius={2.3}
         tickCount={24}
         tickLength={0.15}
         tickWidth={LINE_WIDTH}
-      />
+      /> */}
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
       {/* Linear rulers */}
       <Ruler
