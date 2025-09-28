@@ -17,7 +17,7 @@ export default function WebGLCanvas() {
   const generateCirclePositions = (
     count: number
   ): [number, number, number][] => {
-    const circles = [0.5, 1.0, 1.5, 2.0]; // Concentric circle radii
+    const circles = [0.3, 0.6, 0.9, 1.2]; // Concentric circle radii
     const positions: [number, number, number][] = [];
 
     for (let i = 0; i < count; i++) {
@@ -28,8 +28,8 @@ export default function WebGLCanvas() {
       // Calculate x, y position on the circle
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
-      let z = Math.random() * 4 - 2; // Random z coordinate
-      z = (1.5 * Math.floor(z * 1.5)) / 1.5;
+      let z = Math.random() * 8; // Random value 0-8
+      z = Math.floor(z) - 3.5; // Constrain to 8 discrete values: [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5]
       positions.push([x, y, z]);
     }
 
@@ -86,10 +86,10 @@ export default function WebGLCanvas() {
       <TickMarks tickCount={12} tickLength={2} tickWidth={LINE_WIDTH} />
       {/* Linear rulers */}
       <Ruler
-        start={[0, 0, -3]}
-        end={[0, 0, 2]}
-        tickCount={6}
-        tickLength={2}
+        start={[0, 0, -3.5]}
+        end={[0, 0, 3.5]}
+        tickCount={8}
+        tickLength={1.5}
         tickWidth={LINE_WIDTH}
         direction="horizontal"
       />

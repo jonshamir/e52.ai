@@ -28,7 +28,7 @@ body {
   --color-text: rgb(94, 94, 92);
   --color-text-rgb: 94, 94, 92;
 
-  --color-bg: rgb(241, 241, 238);
+  --color-bg: rgb(57, 90, 167);
   --color-bg-rgb: 241, 241, 238;
 
   --font-titles: "Inter Variable", sans-serif;
@@ -66,7 +66,7 @@ main {
 }
 
 .intro {
-  display: flex;
+  display: none;
   padding: 1.5rem;
   margin-top: -8rem;
   transform: translateX(-4rem);
@@ -104,7 +104,7 @@ main {
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  transform: translate(15%, -5%);
+  /* transform: translate(15%, -5%); */
 
   @media (max-width: 70rem) {
     transform: translateX(15%) translateY(-20%);

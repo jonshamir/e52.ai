@@ -82,6 +82,9 @@ export default function CameraController() {
           z = Math.cos(easedAngle) * radius;
         }
 
+        x = Math.sin(Math.PI / 2) * radius;
+        z = Math.cos(Math.PI / 2) * radius;
+
         camera.position.set(x, 0, z);
         camera.lookAt(0, 0, 0);
 

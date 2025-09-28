@@ -91,6 +91,7 @@ export default function Lines() {
         // Each line has its own timing offset based on its index
         const timeOffset = index * 0.3;
         const cycleTime = (state.clock.elapsedTime + timeOffset) % 8; // 8 second cycle
+        return 1;
 
         // Create smooth in/out animation with longer hold time
         if (cycleTime < 0.5) {
